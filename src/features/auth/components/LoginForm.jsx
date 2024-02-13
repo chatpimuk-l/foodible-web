@@ -3,12 +3,12 @@ import { useState } from "react";
 import Form from "../../../components/Form";
 import Input from "../../../components/Input";
 import useAuth from "../hooks/useAuth";
-import validateRegister from "../validators/validate-register";
+import validateLogin from "../validators/validate-login";
 
 export default function registerForm() {
-  const { register } = useAuth();
+  const { login } = useAuth();
 
-  const initial = { name: "", email: "", password: "", confirmPassword: "" };
+  const initial = { email: "", password: "" };
   const [input, setInput] = useState(initial);
   const [error, setError] = useState({});
 
@@ -19,37 +19,27 @@ export default function registerForm() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const validateError = validateRegister(input);
+      const validateError = validateLogin(input);
       if (validateError) {
         return setError(validateError);
       }
 
-      await register(input);
-      toast("Successfully registered");
+      await login(input);
+      toast("Successfully logined");
       setInput(initial);
       setError({});
     } catch (err) {
-      if (err.response?.data.message === "User already existed") {
-        return setError({ email: "This EMAIL is in use" });
-      }
+      toast(err.response?.data.message);
     }
   };
 
   return (
     <Form
-      title={"SIGN UP"}
-      buttonText={"SIGN UP"}
-      subButtonText="OR LOG IN"
+      title={"LOG IN"}
+      buttonText={"LOG IN"}
+      subButtonText="OR SIGN UP"
       onSubmit={handleSubmit}
     >
-      <Input
-        label="NAME"
-        id="name"
-        name="name"
-        value={input.name}
-        onChange={handleInputChange}
-        errorMessage={error.name}
-      />
       <Input
         label="EMAIL"
         id="email"
@@ -65,14 +55,6 @@ export default function registerForm() {
         value={input.password}
         onChange={handleInputChange}
         errorMessage={error.password}
-      />
-      <Input
-        label="CONFIRM PASSWORD"
-        id="confirmPassword"
-        name="confirmPassword"
-        value={input.confirmPassword}
-        onChange={handleInputChange}
-        errorMessage={error.confirmPassword}
       />
     </Form>
   );

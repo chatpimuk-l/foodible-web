@@ -1,6 +1,13 @@
 import Button from "./Button";
+import SubButton from "./SubButton";
 
-export default function Form({ children, title, buttonText, onSubmit }) {
+export default function Form({
+  children,
+  title,
+  buttonText,
+  subButtonText = null,
+  onSubmit,
+}) {
   return (
     <form
       onSubmit={onSubmit}
@@ -9,7 +16,8 @@ export default function Form({ children, title, buttonText, onSubmit }) {
       <h1 className="font-black text-7xl">{title}</h1>
       <div className="flex flex-col gap-3">{children}</div>
       <div className="absolute bottom-8 items-start">
-        <Button>{buttonText}</Button>
+        <Button type="submit">{buttonText}</Button>
+        <SubButton>{subButtonText}</SubButton>
       </div>
     </form>
   );

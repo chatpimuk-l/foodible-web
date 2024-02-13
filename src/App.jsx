@@ -3,8 +3,14 @@ import { toast, ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import Router from "./routes";
+import useAuth from "./features/auth/hooks/useAuth";
+import Spinner from "./components/Spinner";
 
 function App() {
+  const { initialLoading } = useAuth();
+
+  if (initialLoading) return <Spinner />;
+
   return (
     <>
       <Router />
