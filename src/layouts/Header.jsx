@@ -11,7 +11,7 @@ export default function Header() {
         <img src={logo} alt="logo" className="w-48" />
       </Link>
       <div className="flex gap-8">
-        <Link to="/profile">
+        <Link to="/my-profile">
           <h5 className="text-black text-3xl font-black">MY PROFILE</h5>
         </Link>
         {authUser ? (

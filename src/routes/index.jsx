@@ -38,8 +38,9 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <HomePage /> },
       { path: "recipe", element: <RecipePage /> },
+      { path: "profile/:targetUserId", element: <ProfilePage /> },
       {
-        path: "profile",
+        path: "my-profile",
         element: (
           <ProtectedRoute>
             <ProfilePage />
