@@ -1,7 +1,11 @@
 import { toast } from "react-toastify";
 import { createContext, useEffect, useState } from "react";
 import * as authApi from "../../../api/auth";
-import { getToken, storeToken } from "../../../utils/local-storage";
+import {
+  getToken,
+  removeToken,
+  storeToken,
+} from "../../../utils/local-storage";
 
 export const AuthContext = createContext();
 
@@ -34,8 +38,22 @@ export default function AuthContextProvider({ children }) {
     storeToken(res.data.accessToken);
   };
 
+  const logout = () => {
+    setAuthUser(null);
+    removeToken();
+    toast("Successfully loged out");
+  };
+
   return (
-    <AuthContext.Provider value={{ authUser, initialLoading, register, login }}>
+    <AuthContext.Provider
+      value={{
+        authUser,
+        initialLoading,
+        register,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

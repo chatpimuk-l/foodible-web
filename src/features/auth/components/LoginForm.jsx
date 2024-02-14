@@ -4,8 +4,10 @@ import Form from "../../../components/Form";
 import Input from "../../../components/Input";
 import useAuth from "../hooks/useAuth";
 import validateLogin from "../validators/validate-login";
+import { useNavigate } from "react-router-dom";
 
 export default function registerForm() {
+  const navigate = useNavigate();
   const { login } = useAuth();
 
   const initial = { email: "", password: "" };
@@ -25,12 +27,16 @@ export default function registerForm() {
       }
 
       await login(input);
-      toast("Successfully logined");
+      toast("Successfully loged in");
       setInput(initial);
       setError({});
     } catch (err) {
       toast(err.response?.data.message);
     }
+  };
+
+  const handleClickSubButton = (e) => {
+    navigate("/register");
   };
 
   return (
@@ -39,6 +45,7 @@ export default function registerForm() {
       buttonText={"LOG IN"}
       subButtonText="OR SIGN UP"
       onSubmit={handleSubmit}
+      onClickSubButton={handleClickSubButton}
     >
       <Input
         label="EMAIL"

@@ -1,18 +1,38 @@
+const bgColorClass = {
+  primary: "bg-primary",
+  white: "bg-white",
+  black: "bg-black",
+};
+
+const textColorClass = {
+  primary: "text-primary",
+  white: "text-white",
+  black: "text-black",
+};
+
+const hoverTextColorClass = {
+  primary: "hover:text-primary",
+  white: "hover:text-white",
+  black: "hover:text-black",
+};
+
 export default function Button({
   children,
   bgColor = "black",
   textColor = "white",
-  hoverColor = "yellow",
+  hoverTextColor = "primary",
   type = "button",
 }) {
-  const extendedClasses = `bg-${bgColor} text-${textColor}`;
+  const extendedClasses = `${bgColorClass[bgColor]} ${textColorClass[textColor]} ${hoverTextColorClass[hoverTextColor]}`;
 
   return (
     <button
       type={type}
-      className={`py-4 px-8 font-black text-2xl ${extendedClasses} hover:text-${hoverColor}`}
+      className={`py-4 px-8 font-black text-2xl  ${extendedClasses}`}
     >
-      {children}
+      <h1>{children}</h1>
     </button>
   );
 }
+
+// text-white bg-black hover:text-primary
