@@ -34,5 +34,3 @@ export default function Button({
     </button>
   );
 }
-
-// text-white bg-black hover:text-primary

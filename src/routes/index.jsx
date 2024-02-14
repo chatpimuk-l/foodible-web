@@ -6,9 +6,9 @@ import HomePage from "../pages/HomePage";
 import RedirectIfAuthenticated from "../features/auth/components/RedirectIfAuthenticated";
 import Header from "../layouts/Header";
 import { Outlet } from "react-router-dom";
-import MenuPage from "../pages/MenuPage";
 import ProfilePage from "../pages/ProfilePage";
 import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import RecipePage from "../pages/RecipePage";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: "", element: <HomePage /> },
-      { path: "menu", element: <MenuPage /> },
+      { path: "recipe", element: <RecipePage /> },
       {
         path: "profile",
         element: (
