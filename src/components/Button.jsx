@@ -22,13 +22,20 @@ export default function Button({
   textColor = "white",
   hoverTextColor = "primary",
   type = "button",
+  onClick = null,
+  small = false,
 }) {
   const extendedClasses = `${bgColorClass[bgColor]} ${textColorClass[textColor]} ${hoverTextColorClass[hoverTextColor]}`;
 
   return (
     <button
+      onClick={onClick}
       type={type}
-      className={`py-4 px-8 font-black text-2xl  ${extendedClasses}`}
+      className={
+        small
+          ? `py-2 px-4 font-extrabold text-base  ${extendedClasses}`
+          : `py-4 px-8 font-black text-2xl  ${extendedClasses}`
+      }
     >
       <h1>{children}</h1>
     </button>

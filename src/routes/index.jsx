@@ -4,11 +4,10 @@ import RegisterPage from "../pages/RegisterPage";
 import LoginPage from "../pages/LoginPage";
 import HomePage from "../pages/HomePage";
 import RedirectIfAuthenticated from "../features/auth/components/RedirectIfAuthenticated";
-import Header from "../layouts/Header";
-import { Outlet } from "react-router-dom";
 import ProfilePage from "../pages/ProfilePage";
-import ProtectedRoute from "../features/auth/components/ProtectedRoute";
 import RecipePage from "../pages/RecipePage";
+import EditProfileForm from "../features/profile/components/EditProfileForm";
+import Container from "../layouts/Container";
 
 const router = createBrowserRouter([
   {
@@ -29,24 +28,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: (
-      <>
-        <Header />
-        <Outlet />
-      </>
-    ),
+    element: <Container />,
     children: [
       { path: "", element: <HomePage /> },
       { path: "recipe", element: <RecipePage /> },
       { path: "profile/:targetUserId", element: <ProfilePage /> },
-      {
-        path: "my-profile",
-        element: (
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        ),
-      },
+      { path: "profile/:targetUserId/edit", element: <EditProfileForm /> },
     ],
   },
 ]);

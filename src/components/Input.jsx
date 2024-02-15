@@ -18,7 +18,7 @@ export default function Input({
   return (
     <>
       <div className="flex flex-col gap-2">
-        <div className=" max-w-[600px]">
+        <div className=" flex flex-col max-w-[600px]">
           <label htmlFor={id} className="font-black text-2xl">
             {label}
           </label>

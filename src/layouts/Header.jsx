@@ -11,11 +11,15 @@ export default function Header() {
         <img src={logo} alt="logo" className="w-48" />
       </Link>
       <div className="flex gap-8">
-        <Link to="/my-profile">
+        {/* <Link to={`profile/${authUser?.id}`}>
           <h5 className="text-black text-3xl font-black">MY PROFILE</h5>
-        </Link>
+        </Link> */}
+
         {authUser ? (
           <>
+            <Link to={`profile/${authUser?.id}`}>
+              <h5 className="text-black text-3xl font-black">MY PROFILE</h5>
+            </Link>
             <Link to="/">
               <i
                 className="fa-solid fa-right-from-bracket text-black text-3xl"
@@ -25,6 +29,9 @@ export default function Header() {
           </>
         ) : (
           <>
+            <Link to="/login">
+              <h5 className="text-black text-3xl font-black">MY PROFILE</h5>
+            </Link>
             <Link to="/login">
               <i className="fa-solid fa-right-to-bracket text-black text-3xl"></i>
             </Link>
