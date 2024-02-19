@@ -1,4 +1,5 @@
 import { createContext, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 import * as userApi from "../../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
@@ -35,7 +36,13 @@ export default function ProfileContextProvider({ children }) {
       ...userProfile,
       image: e.target.files[0],
     });
-    setUserProfileImage(URL.createObjectURL(e.target.files[0]));
+    if (e.target?.files[0]) {
+      setUserProfileImage(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  const handleCancel = (e) => {
+    navigate(`/profile/${userProfile.id}`);
   };
 
   const handleEditFormSubmit = async (e) => {
@@ -47,7 +54,9 @@ export default function ProfileContextProvider({ children }) {
       formData.append("email", userProfile.email);
       formData.append("bio", userProfile.bio);
       formData.append("image", userProfile.image);
-      await userApi.updateUserByTargetUserId(formData);
+      const res = await userApi.updateUserByTargetUserId(formData);
+      res.data.image = userProfileImage;
+      setUserProfile((prev) => ({ ...prev, ...res.data }));
       navigate(`/profile/${userProfile.id}`);
       setLoading(false);
     } catch (err) {
@@ -60,12 +69,21 @@ export default function ProfileContextProvider({ children }) {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      try {
-        const result = await userApi.getUserProfileByTargetUserId(targetUserId);
-        setUserProfile(result.data.userProfile);
-        setUserProfileImage(result.data.userProfile.image);
-      } catch (err) {
-        console.log(err);
+      if (targetUserId) {
+        try {
+          setLoading("true");
+          console.log("targetUserId", targetUserId);
+          const result = await userApi.getUserProfileByTargetUserId(
+            targetUserId
+          );
+          setUserProfile(result.data.userProfile);
+          setUserProfileImage(result.data.userProfile.image);
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+        }
       }
     };
     fetchUserProfile();
@@ -79,6 +97,7 @@ export default function ProfileContextProvider({ children }) {
         handleInputChange,
         handleImageClear,
         handleImageChange,
+        handleCancel,
         userProfileImage,
         handleEditFormSubmit,
         userProfileImageFileEl,

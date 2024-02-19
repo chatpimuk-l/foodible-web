@@ -24,8 +24,11 @@ export default function Button({
   type = "button",
   onClick = null,
   small = false,
+  invisible = false,
 }) {
-  const extendedClasses = `${bgColorClass[bgColor]} ${textColorClass[textColor]} ${hoverTextColorClass[hoverTextColor]}`;
+  const extendedClasses = `${bgColorClass[bgColor]} ${
+    textColorClass[textColor]
+  } ${hoverTextColorClass[hoverTextColor]} ${invisible && "invisible"}`;
 
   return (
     <button

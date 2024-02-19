@@ -10,6 +10,7 @@ export default function EditProfileForm() {
     handleInputChange,
     handleImageClear,
     handleImageChange,
+    handleCancel,
     userProfileImage,
     handleEditFormSubmit,
     userProfileImageFileEl,
@@ -24,9 +25,9 @@ export default function EditProfileForm() {
     <Form
       title={"EDIT PROFILE"}
       buttonText={"DONE"}
-      // subButtonText="OR SIGN UP"
+      subButtonText="CANCEL"
       onSubmit={handleEditFormSubmit}
-      // onClickSubButton={handleClickSubButton}
+      onClickSubButton={handleCancel}
     >
       <input
         type="file"
@@ -42,15 +43,16 @@ export default function EditProfileForm() {
         onChange={handleInputChange}
         // errorMessage={error.email}
       />
-      <Input
+      {/* <Input
         label="EMAIL"
         id="email"
         name="email"
         value={userProfile.email}
         onChange={handleInputChange}
         // errorMessage={error.email}
-      />
+      /> */}
       <Input
+        textarea
         label="BIO"
         id="bio"
         name="bio"
@@ -60,7 +62,6 @@ export default function EditProfileForm() {
       />
       <InputImage
         label="IMAGE"
-        // value={userProfile.image}
         onClick={() => userProfileImageFileEl.current.click()}
         onClear={handleImageClear}
         type="button"

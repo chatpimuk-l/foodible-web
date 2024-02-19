@@ -6,6 +6,9 @@ export default {
       colors: {
         primary: "#FAC41B",
       },
+      spacing: {
+        appWidth: "144px",
+      },
     },
   },
   plugins: [require("daisyui")],

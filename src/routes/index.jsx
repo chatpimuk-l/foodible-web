@@ -8,6 +8,7 @@ import ProfilePage from "../pages/ProfilePage";
 import RecipePage from "../pages/RecipePage";
 import EditProfileForm from "../features/profile/components/EditProfileForm";
 import Container from "../layouts/Container";
+import CreateRecipeForm from "../features/recipe/components/CreateRecipeForm";
 
 const router = createBrowserRouter([
   {
@@ -31,9 +32,13 @@ const router = createBrowserRouter([
     element: <Container />,
     children: [
       { path: "", element: <HomePage /> },
-      { path: "recipe", element: <RecipePage /> },
+      { path: "recipe/:recipeId", element: <RecipePage /> },
       { path: "profile/:targetUserId", element: <ProfilePage /> },
       { path: "profile/:targetUserId/edit", element: <EditProfileForm /> },
+      {
+        path: "recipe/create",
+        element: <CreateRecipeForm />,
+      },
     ],
   },
 ]);

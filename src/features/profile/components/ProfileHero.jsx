@@ -9,7 +9,7 @@ export default function ProfileHero() {
   } = useProfile();
   return (
     <div className="flex bg-black text-white h-[50vh]">
-      <div className="w-[72vw] h-100%  flex flex-col gap-20 justify-between items-start px-20 py-16">
+      <div className="w-[72vw] h-100%  flex flex-col gap-14 justify-between items-start px-appWidth py-12">
         <Link to={`/profile/${id}/edit`}>
           <Button bgColor="white" textColor="black" hoverTextColor="primary">
             EDIT

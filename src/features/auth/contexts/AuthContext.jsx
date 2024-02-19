@@ -16,11 +16,21 @@ export default function AuthContextProvider({ children }) {
   useEffect(() => {
     if (getToken()) {
       setInitialLoading(true);
+      console.log("fetchme");
       authApi
         .fetchMe()
-        .then((res) => setAuthUser(res.data.user))
-        .catch((err) => toast(err.response?.data.message))
-        .finally(() => setInitialLoading(false));
+        .then((res) => {
+          console.log("thennn");
+          setAuthUser(res.data.user);
+        })
+        .catch((err) => {
+          toast(err.response?.data.message);
+          console.log("errrr");
+        })
+        .finally(() => {
+          setInitialLoading(false);
+          console.log("gm");
+        });
     } else {
       setInitialLoading(false);
     }

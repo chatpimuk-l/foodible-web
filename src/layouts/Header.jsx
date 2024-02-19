@@ -6,7 +6,7 @@ export default function Header() {
   const { authUser, logout } = useAuth();
 
   return (
-    <div className="flex justify-between items-center py-10 px-20">
+    <div className="flex justify-between items-center py-10 px-appWidth">
       <Link to="/">
         <img src={logo} alt="logo" className="w-48" />
       </Link>

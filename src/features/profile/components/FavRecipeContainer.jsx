@@ -1,8 +1,6 @@
-import { Link } from "react-router-dom";
-import Button from "../../../components/Button";
 import VerticalCard from "../../../components/VerticalCard";
 
-export default function MyRecipeContainer() {
+export default function FavRecipeContainer() {
   return (
     <div className="flex flex-col gap-6">
       <div className=" flex justify-between">
@@ -11,11 +9,6 @@ export default function MyRecipeContainer() {
           <div>LATEST</div>
           <div className="underline">HIGHEST RATED</div>
         </div>
-      </div>
-      <div>
-        <Link to="/recipe/create">
-          <Button>ADD RECIPE</Button>
-        </Link>
       </div>
       <div className="flex gap-4">
         <VerticalCard />

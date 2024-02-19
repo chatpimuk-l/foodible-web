@@ -1,10 +1,10 @@
 import recipe from "../assets/recipe.png";
-import star from "../assets/star.png";
 import SelectedText from "./SelectedText";
+import StarGroup from "./StarGroup";
 
 export default function VerticalCard() {
   return (
-    <div className=" flex flex-col gap-4 w-[350px] h-[500px] border-8 border-black p-3">
+    <div className=" flex flex-col gap-4 w-[350px] h-[500px] border-8 border-black hover:border-primary p-4">
       <img
         src={recipe}
         alt="recipe_image"
@@ -17,13 +17,7 @@ export default function VerticalCard() {
         <SelectedText>SALMON</SelectedText>
         <SelectedText>SALT</SelectedText>
       </div>
-      <div className="flex -space-x-0.5">
-        <img src={star} alt="star" className="h-6" />
-        <img src={star} alt="star" className="h-6" />
-        <img src={star} alt="star" className="h-6" />
-        <img src={star} alt="star" className="h-6" />
-        <img src={star} alt="star" className="h-6" />
-      </div>
+      <StarGroup />
     </div>
   );
 }
