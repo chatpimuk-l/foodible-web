@@ -1,11 +1,6 @@
 import recipe from "../../../assets/recipe.png";
 
-export default function RecipeInstruction() {
-  const instructions = [
-    { instruction: "put carrot in a pot", image: recipe },
-    { instruction: "boil them", image: recipe },
-  ];
-
+export default function RecipeInstruction({ recipeInstructions }) {
   function Instructions({ index, instruction, image }) {
     return (
       <div className="flex flex-col gap-3 border-8 border-black py-8 px-16">
@@ -18,7 +13,7 @@ export default function RecipeInstruction() {
     );
   }
 
-  const renderInstructions = instructions.map((el, index) => (
+  const renderInstructions = recipeInstructions?.map((el, index) => (
     <Instructions
       key={index}
       index={index}

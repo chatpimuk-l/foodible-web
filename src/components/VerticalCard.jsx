@@ -1,23 +1,23 @@
-import recipe from "../assets/recipe.png";
+import { Link } from "react-router-dom";
 import SelectedText from "./SelectedText";
 import StarGroup from "./StarGroup";
 
-export default function VerticalCard() {
+export default function VerticalCard({ id, name, recipeImage }) {
   return (
-    <div className=" flex flex-col gap-4 w-[350px] h-[500px] border-8 border-black hover:border-primary p-4">
-      <img
-        src={recipe}
-        alt="recipe_image"
-        className="w-[100%] h-[210px] object-cover object-center"
-      />
-      <h5 className=" text-3xl font-black">
-        SMOKY ROASTED SAUSAGE AND VEGETABLES
-      </h5>
-      <div className="flex gap-2">
-        <SelectedText>SALMON</SelectedText>
-        <SelectedText>SALT</SelectedText>
+    <Link to={`/recipe/${id}`}>
+      <div className=" flex flex-col gap-4 w-[350px] h-[500px] border-8 border-black hover:border-primary p-4">
+        <img
+          src={recipeImage}
+          alt="recipe_image"
+          className="w-[100%] h-[210px] object-cover object-center"
+        />
+        <h5 className=" text-3xl font-black">{name}</h5>
+        <div className="flex gap-2">
+          <SelectedText>SALMON</SelectedText>
+          <SelectedText>SALT</SelectedText>
+        </div>
+        <StarGroup />
       </div>
-      <StarGroup />
-    </div>
+    </Link>
   );
 }

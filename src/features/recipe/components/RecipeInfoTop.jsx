@@ -1,6 +1,10 @@
 import StarGroup from "../../../components/StarGroup";
 
-export default function RecipeInfoTop() {
+export default function RecipeInfoTop({
+  recipeServing,
+  recipePrepTime,
+  recipeCookTime,
+}) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-1 items-center">
@@ -14,7 +18,7 @@ export default function RecipeInfoTop() {
           </div>
           <div className="flex flex-col -space-y-0.5">
             <div className=" font-semibold">SERVINGS</div>
-            <div className=" font-black">4</div>
+            <div className=" font-black">{recipeServing}</div>
           </div>
         </div>
         <div>
@@ -25,15 +29,17 @@ export default function RecipeInfoTop() {
             <div className="flex gap-6">
               <div className="flex flex-col -space-y-0.5">
                 <div className=" font-semibold">PREP</div>
-                <div className=" font-black">20 mins</div>
+                <div className=" font-black">{recipePrepTime} mins</div>
               </div>
               <div className="flex flex-col -space-y-0.5">
                 <div className=" font-semibold">COOK</div>
-                <div className=" font-black">30 mins</div>
+                <div className=" font-black">{recipeCookTime} mins</div>
               </div>
               <div className="flex flex-col -space-y-0.5">
                 <div className=" font-semibold">TOTAL</div>
-                <div className=" font-black">50 mins</div>
+                <div className=" font-black">
+                  {recipePrepTime + recipeCookTime} mins
+                </div>
               </div>
             </div>
           </div>

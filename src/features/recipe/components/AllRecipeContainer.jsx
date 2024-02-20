@@ -1,6 +1,8 @@
 import HorizontalCard from "../../../components/HorizontalCard";
+import useRecipe from "../hooks/useRecipe";
 
 export default function AllRecipeContainer() {
+  const { renderRecipes } = useRecipe();
   return (
     <div className="flex flex-col gap-6">
       <div className=" flex justify-between">
@@ -10,11 +12,7 @@ export default function AllRecipeContainer() {
           <div className="underline">HIGHEST RATED</div>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <HorizontalCard />
-        <HorizontalCard />
-        <HorizontalCard />
-      </div>
+      <div className="flex flex-col gap-4">{renderRecipes}</div>
     </div>
   );
 }

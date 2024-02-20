@@ -1,8 +1,19 @@
 import { Link } from "react-router-dom";
 import Button from "../../../components/Button";
 import VerticalCard from "../../../components/VerticalCard";
+import useRecipe from "../../recipe/hooks/useRecipe";
 
 export default function MyRecipeContainer() {
+  const { writerRecipes } = useRecipe();
+
+  const renderWriterRecipes = writerRecipes?.map((el) => (
+    <VerticalCard
+      key={el.id}
+      id={el.id}
+      name={el.name}
+      recipeImage={el.infos?.[0]?.image}
+    />
+  ));
   return (
     <div className="flex flex-col gap-6">
       <div className=" flex justify-between">
@@ -17,11 +28,7 @@ export default function MyRecipeContainer() {
           <Button>ADD RECIPE</Button>
         </Link>
       </div>
-      <div className="flex gap-4">
-        <VerticalCard />
-        <VerticalCard />
-        <VerticalCard />
-      </div>
+      <div className="flex gap-4">{renderWriterRecipes}</div>
     </div>
   );
 }

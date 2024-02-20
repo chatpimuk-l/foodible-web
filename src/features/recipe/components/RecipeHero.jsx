@@ -3,9 +3,9 @@ import recipe from "../../../assets/recipe.png";
 import Button from "../../../components/Button";
 import useProfile from "../../profile/hooks/useProfile";
 
-export default function RecipeHero() {
+export default function RecipeHero({ recipeName, recipeImage }) {
   const {
-    userProfile: { id, name, bio, image },
+    userProfile: { id },
   } = useProfile();
   return (
     <div className="flex bg-black text-white h-[70vh]">
@@ -21,9 +21,7 @@ export default function RecipeHero() {
           </Button>
         </div>
         <div className="flex flex-col gap-4">
-          <h1 className="text-6xl font-black pr-10">
-            CHICKEN BOWLS WITH CHILI SAUCE
-          </h1>
+          <h1 className="text-6xl font-black pr-10">{recipeName}</h1>
           <div className="flex gap-3">
             <Button
               small
@@ -46,7 +44,7 @@ export default function RecipeHero() {
       </div>
       <div>
         <img
-          src={recipe}
+          src={recipeImage}
           alt="recipe_image"
           className="w-[42vw] h-[100%] object-cover object-center"
         />

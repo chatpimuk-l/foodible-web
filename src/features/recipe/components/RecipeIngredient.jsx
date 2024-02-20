@@ -1,12 +1,4 @@
-export default function RecipeIngredient() {
-  const ingredients = [
-    { ingredient: "carrot", amount: "2", unit: "pieces" },
-    { ingredient: "carrot", amount: "2", unit: "pieces" },
-    { ingredient: "carrot", amount: "2", unit: "pieces" },
-    { ingredient: "carrot", amount: "2", unit: "pieces" },
-    { ingredient: "carrot", amount: "2", unit: "pieces" },
-  ];
-
+export default function RecipeIngredient({ recipeIngredients }) {
   function Ingredients({ ingredient, amount, unit }) {
     return (
       <div className="flex items-center text-xl">
@@ -24,7 +16,7 @@ export default function RecipeIngredient() {
     );
   }
 
-  const renderIngredients = ingredients.map((el, index) => (
+  const renderIngredients = recipeIngredients.map((el, index) => (
     <Ingredients
       key={index}
       ingredient={el.ingredient}

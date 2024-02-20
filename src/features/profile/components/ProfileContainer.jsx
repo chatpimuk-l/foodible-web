@@ -7,7 +7,7 @@ export default function ProfilePage() {
   return (
     <>
       <ProfileHero />
-      <div className="py-16 px-appWidth">
+      <div className="py-8 px-appWidth">
         <SearchBar />
       </div>
       <div className=" px-appWidth">

@@ -6,6 +6,8 @@ import InputInstruction from "../components/InputInstruction";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../features/auth/hooks/useAuth";
 import * as recipeApi from "../../../api/recipe";
+import HorizontalCard from "../../../components/HorizontalCard";
+import { useParams } from "react-router-dom";
 
 export const RecipeContext = createContext();
 
@@ -23,7 +25,80 @@ export default function RecipeContextProvider({ children }) {
   const [recipeImage, setRecipeImage] = useState(recipe.image || null);
   const [loading, setLoading] = useState(false);
 
+  const [recipes, setRecipes] = useState([]);
+
   const recipeImageFileEl = useRef(null);
+
+  const { recipeId, targetUserId } = useParams();
+
+  const [recipeObj, setRecipeObj] = useState({});
+  const [writerRecipes, setWriterRecipes] = useState([]);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      if (recipeId) {
+        try {
+          setLoading(true);
+          console.log("lll");
+          const recipeById = await recipeApi.getRecipeByRecipeId(recipeId);
+          const recipesByUserId = await recipeApi.getRecipesByuserId(
+            recipeById.data.recipe.userId
+          );
+          setRecipeObj(recipeById.data.recipe);
+          setWriterRecipes(recipesByUserId.data?.recipes);
+          console.log("ooo");
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+          console.log("recipeObj", recipeObj);
+          console.log("writerRecipes", writerRecipes);
+        }
+      }
+    };
+    fetchRecipe();
+  }, [recipeId]);
+
+  useEffect(() => {
+    const fetchRecipesByTargetUserId = async () => {
+      if (targetUserId) {
+        try {
+          setLoading(true);
+          console.log("lllhhh");
+          const recipesByUserId = await recipeApi.getRecipesByuserId(
+            +targetUserId
+          );
+          setWriterRecipes(recipesByUserId.data?.recipes);
+          console.log("ooohhh");
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+          console.log("writerRecipes", writerRecipes);
+        }
+      }
+    };
+    fetchRecipesByTargetUserId();
+  }, [targetUserId]);
+
+  const fetchRecipes = async () => {
+    try {
+      setLoading(true);
+      const res = await recipeApi.getRecipes();
+      setRecipes(res.data.recipes);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
 
   const handleRecipeImageChange = (e) => {
     setRecipe({
@@ -74,14 +149,12 @@ export default function RecipeContextProvider({ children }) {
       formData.append("cookTime", recipe.cookTime);
       formData.append("serving", recipe.serving);
       formData.append("tip", recipe.tip);
-      console.log("ingredientList", ingredientList);
       const ingredients = ingredientList.reduce((acc, el) => {
         acc.push(el.inputs);
         return acc;
       }, []);
-      console.log("ingredients", ingredients);
+
       const stringifiedIngredients = JSON.stringify(ingredients);
-      console.log("stringifiedIngredients", stringifiedIngredients);
       formData.append("ingredients", stringifiedIngredients);
 
       const instructions = instructionList.reduce((acc, el) => {
@@ -89,26 +162,16 @@ export default function RecipeContextProvider({ children }) {
         return acc;
       }, []);
 
-      console.log("instructions", instructions);
       const stringifiedInstructions = JSON.stringify(instructions);
       formData.append("instructions", stringifiedInstructions);
-      console.log(3);
-      console.log("stringifiedInstructions", stringifiedInstructions);
 
       for (let i of instructionList) {
         if (i.inputs.image) {
-          console.log("i.inputs.image", i.inputs.image);
           formData.append("instructionImage", i.inputs.image);
         }
       }
-      console.log(4);
-      console.log(formData.getAll("instructions"));
-      console.log("bf api");
-      const res = await recipeApi.createRecipe(formData);
-      console.log(res);
-      console.log(5);
-      //   res.data.image = userProfileImage;
-      //   setUserProfile((prev) => ({ ...prev, ...res.data }));
+      await recipeApi.createRecipe(formData);
+      fetchRecipes();
       navigate(`/profile/${authUser.id}`);
       setLoading(false);
     } catch (err) {
@@ -135,6 +198,15 @@ export default function RecipeContextProvider({ children }) {
     <InputInstruction id={el.id} key={el.id} />
   ));
 
+  const renderRecipes = recipes?.map((el) => (
+    <HorizontalCard
+      id={el.id}
+      key={el.id}
+      name={el.name}
+      recipeImage={el.infos?.[0]?.image}
+    />
+  ));
+
   return (
     <RecipeContext.Provider
       value={{
@@ -157,6 +229,10 @@ export default function RecipeContextProvider({ children }) {
         handleCancel,
         handleRecipeFormSubmit,
         loading,
+        setLoading,
+        renderRecipes,
+        recipeObj,
+        writerRecipes,
       }}
     >
       {children}
