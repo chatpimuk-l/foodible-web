@@ -1,22 +1,25 @@
 import { Link } from "react-router-dom";
-import recipe from "../../../assets/recipe.png";
 import Button from "../../../components/Button";
-import useProfile from "../../profile/hooks/useProfile";
+import useRecipe from "../hooks/useRecipe";
 
-export default function RecipeHero({ recipeName, recipeImage }) {
-  const {
-    userProfile: { id },
-  } = useProfile();
+export default function RecipeHero({ recipeName, recipeImage, recipeId }) {
+  const { handleDeleteRecipe } = useRecipe();
+
   return (
     <div className="flex bg-black text-white h-[70vh]">
       <div className="w-[58vw] h-100%  flex flex-col gap-10 justify-between items-start px-appWidth py-12">
         <div className="flex gap-3">
-          <Link to={`/profile/${id}/edit`}>
+          <Link to={`/recipe/${recipeId}/edit`}>
             <Button bgColor="white" textColor="black" hoverTextColor="primary">
               EDIT
             </Button>
           </Link>
-          <Button bgColor="white" textColor="black" hoverTextColor="primary">
+          <Button
+            onClick={handleDeleteRecipe}
+            bgColor="white"
+            textColor="black"
+            hoverTextColor="primary"
+          >
             DELETE
           </Button>
         </div>

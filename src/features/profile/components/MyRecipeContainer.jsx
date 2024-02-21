@@ -25,7 +25,9 @@ export default function MyRecipeContainer() {
       </div>
       <div>
         <Link to="/recipe/create">
-          <Button>ADD RECIPE</Button>
+          <Button bgColor="primary" textColor="black" hoverTextColor="white">
+            ADD RECIPE
+          </Button>
         </Link>
       </div>
       <div className="flex gap-4">{renderWriterRecipes}</div>

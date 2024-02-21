@@ -41,6 +41,7 @@ export default function EditProfileForm() {
         name="name"
         value={userProfile.name}
         onChange={handleInputChange}
+        uppercase
         // errorMessage={error.email}
       />
       {/* <Input

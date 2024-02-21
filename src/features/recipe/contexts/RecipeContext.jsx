@@ -15,12 +15,8 @@ export default function RecipeContextProvider({ children }) {
   const { authUser } = useAuth();
   const navigate = useNavigate();
 
-  const [ingredientList, setIngredientList] = useState([
-    { id: nanoid(), inputs: {} },
-  ]);
-  const [instructionList, setInstructionList] = useState([
-    { id: nanoid(), inputs: {} },
-  ]);
+  const [ingredientList, setIngredientList] = useState([{ id: nanoid() }]);
+  const [instructionList, setInstructionList] = useState([{ id: nanoid() }]);
   const [recipe, setRecipe] = useState({});
   const [recipeImage, setRecipeImage] = useState(recipe.image || null);
   const [loading, setLoading] = useState(false);
@@ -34,29 +30,61 @@ export default function RecipeContextProvider({ children }) {
   const [recipeObj, setRecipeObj] = useState({});
   const [writerRecipes, setWriterRecipes] = useState([]);
 
+  const [searchName, setSearchName] = useState("");
+
   useEffect(() => {
-    const fetchRecipe = async () => {
-      if (recipeId) {
-        try {
-          setLoading(true);
-          console.log("lll");
-          const recipeById = await recipeApi.getRecipeByRecipeId(recipeId);
-          const recipesByUserId = await recipeApi.getRecipesByuserId(
-            recipeById.data.recipe.userId
-          );
-          setRecipeObj(recipeById.data.recipe);
-          setWriterRecipes(recipesByUserId.data?.recipes);
-          console.log("ooo");
-          setLoading(false);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
-          console.log("recipeObj", recipeObj);
-          console.log("writerRecipes", writerRecipes);
-        }
+    const fetchRecipesBySearchName = async () => {
+      try {
+        setLoading(true);
+        const recipesBySearchName = await recipeApi.getRecipesBySearchName(
+          searchName
+        );
+        setRecipes(recipesBySearchName.data?.recipes);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
       }
     };
+    fetchRecipesBySearchName();
+  }, [searchName]);
+
+  const fetchRecipe = async () => {
+    if (recipeId) {
+      try {
+        console.log("recipeId", recipeId);
+        setLoading(true);
+        const recipeById = await recipeApi.getRecipeByRecipeId(recipeId);
+        const recipesByUserId = await recipeApi.getRecipesByUserId(
+          recipeById.data.recipe.userId
+        );
+        setRecipeObj(recipeById.data.recipe);
+        setWriterRecipes(recipesByUserId.data?.recipes);
+        setRecipe({
+          name: recipeById.data.recipe.name,
+          description: recipeById.data.recipe.infos?.[0]?.description || null,
+          image: recipeById.data.recipe.infos?.[0]?.image,
+          prepTime: recipeById.data.recipe.infos?.[0]?.prepTime,
+          cookTime: recipeById.data.recipe.infos?.[0]?.cookTime,
+          serving: recipeById.data.recipe.infos?.[0]?.serving,
+          tip: recipeById.data.recipe.infos?.[0]?.tip || null,
+        });
+        setRecipeImage(recipeById.data.recipe.infos?.[0]?.image);
+        setIngredientList(recipeById.data.recipe?.ingredients);
+        setInstructionList(recipeById.data.recipe?.instructions);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+        console.log("recipeObj", recipeObj);
+        console.log("writerRecipes", writerRecipes);
+      }
+    }
+  };
+
+  useEffect(() => {
     fetchRecipe();
   }, [recipeId]);
 
@@ -65,12 +93,10 @@ export default function RecipeContextProvider({ children }) {
       if (targetUserId) {
         try {
           setLoading(true);
-          console.log("lllhhh");
-          const recipesByUserId = await recipeApi.getRecipesByuserId(
+          const recipesByUserId = await recipeApi.getRecipesByUserId(
             +targetUserId
           );
           setWriterRecipes(recipesByUserId.data?.recipes);
-          console.log("ooohhh");
           setLoading(false);
         } catch (err) {
           console.log(err);
@@ -120,6 +146,9 @@ export default function RecipeContextProvider({ children }) {
   const handleCancel = (e) => {
     navigate(`/profile/${authUser.id}`);
   };
+  const handleCancelEditRecipeForm = (e) => {
+    navigate(`/recipe/${recipeId}`);
+  };
 
   const handleIngredientDelete = (id) => {
     setIngredientList(ingredientList.filter((el) => el.id !== id));
@@ -150,7 +179,11 @@ export default function RecipeContextProvider({ children }) {
       formData.append("serving", recipe.serving);
       formData.append("tip", recipe.tip);
       const ingredients = ingredientList.reduce((acc, el) => {
-        acc.push(el.inputs);
+        acc.push({
+          ingredient: el.ingredient,
+          amount: el.amount,
+          unit: el.unit,
+        });
         return acc;
       }, []);
 
@@ -158,7 +191,7 @@ export default function RecipeContextProvider({ children }) {
       formData.append("ingredients", stringifiedIngredients);
 
       const instructions = instructionList.reduce((acc, el) => {
-        acc.push(el.inputs);
+        acc.push({ instruction: el.instruction, image: el.image });
         return acc;
       }, []);
 
@@ -166,8 +199,8 @@ export default function RecipeContextProvider({ children }) {
       formData.append("instructions", stringifiedInstructions);
 
       for (let i of instructionList) {
-        if (i.inputs.image) {
-          formData.append("instructionImage", i.inputs.image);
+        if (i.image) {
+          formData.append("instructionImage", i.image);
         }
       }
       await recipeApi.createRecipe(formData);
@@ -184,18 +217,92 @@ export default function RecipeContextProvider({ children }) {
     }
   };
 
+  const handleSubmitEditRecipeForm = async (e) => {
+    try {
+      console.log("handleSubmitEditRecipeForm");
+      setLoading(true);
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("name", recipe.name);
+      formData.append("description", recipe.description);
+      formData.append("recipeImage", recipe.image);
+      formData.append("prepTime", recipe.prepTime);
+      formData.append("cookTime", recipe.cookTime);
+      formData.append("serving", recipe.serving);
+      formData.append("tip", recipe.tip);
+      const ingredients = ingredientList.reduce((acc, el) => {
+        acc.push({
+          ingredient: el.ingredient,
+          amount: el.amount,
+          unit: el.unit,
+        });
+        return acc;
+      }, []);
+
+      const stringifiedIngredients = JSON.stringify(ingredients);
+      formData.append("ingredients", stringifiedIngredients);
+
+      const instructions = instructionList.reduce((acc, el) => {
+        acc.push({ instruction: el.instruction, image: el.image });
+        return acc;
+      }, []);
+
+      const stringifiedInstructions = JSON.stringify(instructions);
+      formData.append("instructions", stringifiedInstructions);
+
+      for (let i of instructionList) {
+        if (i.image) {
+          formData.append("instructionImage", i.image);
+        }
+      }
+
+      await recipeApi.updateRecipe(recipeId, formData);
+      fetchRecipe();
+      fetchRecipes();
+      navigate(`/recipe/${recipeId}`);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      console.dir(err);
+      console.log(err.response?.data.message);
+      toast(err.response?.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRecipe = async (e) => {
+    try {
+      console.log("handleDeleteRecipe");
+      setLoading(true);
+      e.preventDefault();
+      await recipeApi.deleteRecipe(recipeId);
+      fetchRecipes();
+      navigate(`/profile/${authUser.id}`);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      console.dir(err);
+      console.log(err.response?.data.message);
+      toast(err.response?.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handelAddIngredientList = () => {
-    setIngredientList((prev) => [...prev, { id: nanoid(), inputs: {} }]);
+    setIngredientList((prev) => [...prev, { id: nanoid() }]);
   };
   const handelAddInstructionList = () => {
-    setInstructionList((prev) => [...prev, { id: nanoid(), inputs: {} }]);
+    setInstructionList((prev) => [...prev, { id: nanoid() }]);
   };
 
   const renderIngredientList = ingredientList?.map((el) => (
-    <InputIngredient id={el.id} key={el.id} />
+    <InputIngredient id={el.id} key={el.id} value={el} />
   ));
   const renderInstructionList = instructionList?.map((el) => (
-    <InputInstruction id={el.id} key={el.id} />
+    <InputInstruction id={el.id} key={el.id} value={el} />
   ));
 
   const renderRecipes = recipes?.map((el) => (
@@ -228,11 +335,16 @@ export default function RecipeContextProvider({ children }) {
         handleRecipeImageClear,
         handleCancel,
         handleRecipeFormSubmit,
+        handleCancelEditRecipeForm,
+        handleSubmitEditRecipeForm,
+        handleDeleteRecipe,
         loading,
         setLoading,
         renderRecipes,
         recipeObj,
         writerRecipes,
+        searchName,
+        setSearchName,
       }}
     >
       {children}

@@ -17,8 +17,11 @@ export default function Input({
   rows = "4",
   input = null,
   labelClasses = null,
+  uppercase = false,
 }) {
-  const extendedClasses = `${bgColorClass[bgColor]} ${input}`;
+  const extendedClasses = `${bgColorClass[bgColor]} ${input} ${
+    uppercase && "uppercase"
+  }`;
 
   return (
     <>

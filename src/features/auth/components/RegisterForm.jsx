@@ -23,6 +23,7 @@ export default function registerForm() {
       e.preventDefault();
       const validateError = validateRegister(input);
       if (validateError) {
+        console.log("validateError", validateError);
         return setError(validateError);
       }
 

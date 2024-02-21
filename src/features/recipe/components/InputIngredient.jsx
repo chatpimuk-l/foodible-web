@@ -2,8 +2,9 @@ import { useState } from "react";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import useRecipe from "../hooks/useRecipe";
+import { useEffect } from "react";
 
-export default function InputIngredient({ id }) {
+export default function InputIngredient({ id, value }) {
   const { ingredientList, setIngredientList, handleIngredientDelete } =
     useRecipe();
 
@@ -13,11 +14,21 @@ export default function InputIngredient({ id }) {
     unit: "",
   });
 
+  useEffect(() => {
+    if (value.ingredient) {
+      setIngredientItem({
+        ingredient: value.ingredient,
+        amount: value.amount,
+        unit: value.unit,
+      });
+    }
+  }, []);
+
   const handleIngredientInputChange = (e) => {
     setIngredientItem({ ...ingredientItem, [e.target.name]: e.target.value });
     const index = ingredientList.findIndex((el) => el.id === id);
     const newIngredientList = [...ingredientList];
-    newIngredientList[index].inputs[e.target.name] = e.target.value;
+    newIngredientList[index][e.target.name] = e.target.value;
     setIngredientList(newIngredientList);
   };
 

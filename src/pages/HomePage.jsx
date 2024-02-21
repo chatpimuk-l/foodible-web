@@ -1,10 +1,10 @@
-import SearchBar from "../components/SearchBar";
 import AllRecipeContainer from "../features/recipe/components/AllRecipeContainer";
+import SearchBar from "../features/recipe/components/SearchBar";
 
 export default function HomePage() {
   return (
     <>
-      <div className="px-appWidth">
+      <div>
         <SearchBar />
       </div>
       <div className="px-appWidth py-8">

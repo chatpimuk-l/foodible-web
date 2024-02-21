@@ -20,6 +20,7 @@ export default function RecipeContainer() {
           <RecipeHero
             recipeName={recipeObj.name}
             recipeImage={recipeObj.infos?.[0]?.image}
+            recipeId={recipeObj.id}
           />
           <div className="px-appWidth pt-6 pb-8">
             <RecipeInfoTop

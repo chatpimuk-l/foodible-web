@@ -25,10 +25,13 @@ export default function Button({
   onClick = null,
   small = false,
   invisible = false,
+  lineThrough = false,
 }) {
   const extendedClasses = `${bgColorClass[bgColor]} ${
     textColorClass[textColor]
-  } ${hoverTextColorClass[hoverTextColor]} ${invisible && "invisible"}`;
+  } ${hoverTextColorClass[hoverTextColor]} ${invisible && "invisible"} ${
+    lineThrough && "line-through"
+  }`;
 
   return (
     <button

@@ -20,7 +20,7 @@ export default function ProfileContextProvider({ children }) {
   const handleInputChange = (e) => {
     setUserProfile({
       ...userProfile,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value.toUpperCase(),
     });
   };
 

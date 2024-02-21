@@ -3,8 +3,9 @@ import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import InputImage from "../../../components/InputImage";
 import useRecipe from "../hooks/useRecipe";
+import { useEffect } from "react";
 
-export default function InputInstruction({ id }) {
+export default function InputInstruction({ id, value }) {
   const { instructionList, setInstructionList, handleInstructionDelete } =
     useRecipe();
 
@@ -17,11 +18,21 @@ export default function InputInstruction({ id }) {
 
   const instructionImageFileEl = useRef(null);
 
+  useEffect(() => {
+    if (value.instruction) {
+      setInstructionItem({
+        instruction: value.instruction,
+        image: value.image,
+      });
+      setInstructionImage(value.image);
+    }
+  }, []);
+
   const handleInstructionInputChange = (e) => {
     setInstructionItem({ ...instructionItem, instruction: e.target.value });
     const index = instructionList.findIndex((el) => el.id === id);
     const newInstructionList = [...instructionList];
-    newInstructionList[index].inputs.instruction = e.target.value;
+    newInstructionList[index].instruction = e.target.value;
     setInstructionList(newInstructionList);
   };
 
@@ -32,7 +43,7 @@ export default function InputInstruction({ id }) {
       const index = instructionList.findIndex((el) => el.id === id);
       const newInstructionList = [...instructionList];
       console.log("sdfghjhjhhhh");
-      newInstructionList[index].inputs.image = e.target.files[0];
+      newInstructionList[index].image = e.target.files[0];
 
       setInstructionList(newInstructionList);
     }
@@ -44,7 +55,7 @@ export default function InputInstruction({ id }) {
     setInstructionItem({ ...instructionItem, image: null });
     const index = instructionList.findIndex((el) => el.id === id);
     const newInstructionList = [...instructionList];
-    newInstructionList[index].inputs.image = null;
+    newInstructionList[index].image = null;
     setInstructionList(newInstructionList);
     instructionImageFileEl.current.value = "";
   };

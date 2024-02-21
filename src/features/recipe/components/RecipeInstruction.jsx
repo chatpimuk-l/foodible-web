@@ -8,7 +8,7 @@ export default function RecipeInstruction({ recipeInstructions }) {
           {index + 1}
         </h5>
         <h5 className="font-semibold text-xl">{instruction}</h5>
-        <img src={image} alt="instruction_image" />
+        {image && <img src={image} alt="instruction_image" />}
       </div>
     );
   }
