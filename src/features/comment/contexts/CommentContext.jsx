@@ -41,13 +41,16 @@ export default function CommentContextProvider({ children }) {
   };
 
   useEffect(() => {
-    const run = async () => {
-      if (recipeId) {
-        await fetchResponseList();
-      }
-    };
-    run();
-    console.log("responseList", responseList);
+    if (recipeId) {
+      console.log("recipeId", recipeId);
+      const run = async () => {
+        if (recipeId) {
+          await fetchResponseList();
+        }
+      };
+      run();
+      console.log("responseList", responseList);
+    }
   }, [recipeId]);
 
   const renderResponseList = responseList?.map((el) => (

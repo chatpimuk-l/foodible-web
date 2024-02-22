@@ -22,7 +22,13 @@ export default function CreateRecipeForm() {
     handleRecipeFormSubmit,
     loading,
     error,
+    setIsOpenCreate,
   } = useRecipe();
+
+  useEffect(() => {
+    setIsOpenCreate(true);
+    return () => setIsOpenCreate(false);
+  }, []);
 
   if (loading) {
     return <Spinner />;

@@ -16,7 +16,7 @@ export default function RecipeContainer() {
 
   useEffect(() => {
     return () => {
-      if (isOpenEdit) {
+      if (!isOpenEdit) {
         clearStates();
       }
     };

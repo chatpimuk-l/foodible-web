@@ -37,6 +37,7 @@ export default function RecipeContextProvider({ children }) {
   const [error, setError] = useState({});
 
   const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
   const [isRecipeBelongToAuthUser, setIsRecipeBelongToAuthUser] =
     useState(false);
 
@@ -66,6 +67,13 @@ export default function RecipeContextProvider({ children }) {
     }
   };
 
+  const compareIngredientMatch = (a, b) => {
+    if (a.ingredients > b.ingredients) return -1;
+    return 1;
+  };
+  const sortByIngredientMatch = (unorderedArray) =>
+    unorderedArray.sort(compareIngredientMatch);
+
   const fetchRecipesByInclude = async () => {
     try {
       setLoading(true);
@@ -87,6 +95,7 @@ export default function RecipeContextProvider({ children }) {
           ingredients: el.ingredients,
         })
       );
+      sortByIngredientMatch(editedRecipesByInclude);
       setRecipes(editedRecipesByInclude);
       setLoading(false);
     } catch (err) {
@@ -117,6 +126,7 @@ export default function RecipeContextProvider({ children }) {
           ingredients: el.ingredients,
         })
       );
+      sortByIngredientMatch(editedRecipesByInclude);
       setRecipes(editedRecipesByInclude);
       setLoading(false);
     } catch (err) {
@@ -212,14 +222,23 @@ export default function RecipeContextProvider({ children }) {
   }, [searchName, includeList]);
 
   useEffect(() => {
-    console.log(2121);
-    fetchRecipe();
+    console.log(565656);
+    if (recipeId) {
+      console.log(2121);
+      fetchRecipe();
+    }
   }, [recipeId]);
 
   useEffect(() => {
-    console.log(4545);
-    fetchRecipe();
+    if (isOpenEdit) {
+      fetchRecipe();
+    }
   }, [isOpenEdit]);
+
+  useEffect(() => {
+    console.log(7171717);
+    clearStates();
+  }, [isOpenCreate]);
 
   useEffect(() => {
     fetchRecipesByTargetUserId();
@@ -360,9 +379,11 @@ export default function RecipeContextProvider({ children }) {
           formData.append("instructionImage", i.image);
         }
       }
-      await recipeApi.createRecipe(formData);
-      fetchRecipes();
-      navigate(`/profile/${authUser.id}`);
+      const result = await recipeApi.createRecipe(formData);
+      await fetchRecipe();
+      await fetchRecipes();
+      // navigate(`/profile/${authUser.id}`);
+      navigate(`/recipe/${result.data.recipe.id}`);
       setError({});
       setLoading(false);
     } catch (err) {
@@ -565,6 +586,7 @@ export default function RecipeContextProvider({ children }) {
         clearStates,
         isOpenEdit,
         setIsOpenEdit,
+        setIsOpenCreate,
         isRecipeBelongToAuthUser,
       }}
     >
