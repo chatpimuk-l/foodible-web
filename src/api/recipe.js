@@ -17,3 +17,6 @@ export const getRecipesByUserId = (userId) =>
 
 export const getRecipesBySearchName = (searchName) =>
   axios.get(`/recipes/?name=${searchName}`);
+
+export const getRecipesByInclude = (includeList) =>
+  axios.get(`/recipes/?include=${includeList}`);

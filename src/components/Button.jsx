@@ -21,6 +21,7 @@ export default function Button({
   bgColor = "black",
   textColor = "white",
   hoverTextColor = "primary",
+  hoverLineThrough = false,
   type = "button",
   onClick = null,
   small = false,
@@ -31,7 +32,7 @@ export default function Button({
     textColorClass[textColor]
   } ${hoverTextColorClass[hoverTextColor]} ${invisible && "invisible"} ${
     lineThrough && "line-through"
-  }`;
+  } ${hoverLineThrough && "hover:line-through"}`;
 
   return (
     <button

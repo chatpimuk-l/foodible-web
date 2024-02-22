@@ -25,6 +25,9 @@ export default function InputIngredient({ id, value }) {
   }, []);
 
   const handleIngredientInputChange = (e) => {
+    if (e.target.name === "ingredient") {
+      e.target.value = e.target.value.toUpperCase();
+    }
     setIngredientItem({ ...ingredientItem, [e.target.name]: e.target.value });
     const index = ingredientList.findIndex((el) => el.id === id);
     const newIngredientList = [...ingredientList];

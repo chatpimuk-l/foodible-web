@@ -10,6 +10,7 @@ import HorizontalCard from "../../../components/HorizontalCard";
 import { useParams } from "react-router-dom";
 import validateRecipe from "../validators/validate-recipe";
 import { useLocation } from "react-router-dom";
+import IncludeButton from "../components/IncludeButton";
 
 export const RecipeContext = createContext();
 
@@ -34,6 +35,12 @@ export default function RecipeContextProvider({ children }) {
   const [writerRecipes, setWriterRecipes] = useState([]);
 
   const [searchName, setSearchName] = useState("");
+  const [include, setInclude] = useState("");
+  const [includeObj, setIncludeObj] = useState({
+    id: nanoid(),
+    ingredient: "",
+  });
+  const [includeList, setIncludeList] = useState([]);
 
   const location = useLocation();
   const currentPath = location.pathname;
@@ -43,16 +50,19 @@ export default function RecipeContextProvider({ children }) {
   };
 
   useEffect(() => {
-    if (currentPath.includes("/recipe/create")) {
-      console.log(3636);
-      clearStates();
-      // handleRefresh();
-      // navigate("/recipe/create", { replace: true });
-    }
-    if (currentPath.includes("recipe") && currentPath.includes("edit")) {
-      console.log(7878);
-      fetchRecipe();
-    }
+    const run = async () => {
+      if (currentPath.includes("/recipe/create")) {
+        console.log(3636);
+        clearStates();
+        // handleRefresh();
+        // navigate("/recipe/create", { replace: true });
+      }
+      if (currentPath.includes("recipe") && currentPath.includes("edit")) {
+        console.log(7878);
+        await fetchRecipe();
+      }
+    };
+    run();
   }, [currentPath]);
 
   useEffect(() => {
@@ -72,6 +82,38 @@ export default function RecipeContextProvider({ children }) {
     };
     fetchRecipesBySearchName();
   }, [searchName]);
+
+  useEffect(() => {
+    const fetchRecipesByInclude = async () => {
+      try {
+        setLoading(true);
+        const newIncludeList = includeList.reduce((acc, cur) => {
+          acc.push(cur.ingredient);
+          return acc;
+        }, []);
+        const stringifiedIncludeList = JSON.stringify(newIncludeList);
+        console.log("stringifiedIncludeList", stringifiedIncludeList);
+        const recipesByInclude = await recipeApi.getRecipesByInclude(
+          stringifiedIncludeList
+        );
+        console.log("recipesByInclude", recipesByInclude);
+        const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
+          (el) => ({
+            id: el.id,
+            name: el.name,
+            infos: [{ image: el.infos?.[0].image }],
+            ingredients: el.ingredients,
+          })
+        );
+        setRecipes(editedRecipesByInclude);
+        setLoading(false);
+      } catch (err) {
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipesByInclude();
+  }, [includeList]);
 
   const fetchRecipe = async () => {
     if (recipeId) {
@@ -117,24 +159,24 @@ export default function RecipeContextProvider({ children }) {
     fetchRecipe();
   }, []);
 
-  useEffect(() => {
-    const fetchRecipesByTargetUserId = async () => {
-      if (targetUserId) {
-        try {
-          setLoading(true);
-          const recipesByUserId = await recipeApi.getRecipesByUserId(
-            +targetUserId
-          );
-          setWriterRecipes(recipesByUserId.data?.recipes);
-          setLoading(false);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
-          console.log("writerRecipes", writerRecipes);
-        }
+  const fetchRecipesByTargetUserId = async () => {
+    if (targetUserId) {
+      try {
+        setLoading(true);
+        const recipesByUserId = await recipeApi.getRecipesByUserId(
+          +targetUserId
+        );
+        setWriterRecipes(recipesByUserId.data?.recipes);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+        console.log("writerRecipes", writerRecipes);
       }
-    };
+    }
+  };
+  useEffect(() => {
     fetchRecipesByTargetUserId();
   }, [targetUserId]);
 
@@ -224,10 +266,17 @@ export default function RecipeContextProvider({ children }) {
   };
 
   const handleRecipeInputChange = (e) => {
-    setRecipe({
-      ...recipe,
-      [e.target.name]: e.target.value,
-    });
+    if (e.target.name === "name") {
+      setRecipe({
+        ...recipe,
+        [e.target.name]: e.target.value.toUpperCase(),
+      });
+    } else {
+      setRecipe({
+        ...recipe,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const handleRecipeFormSubmit = async (e) => {
@@ -353,8 +402,8 @@ export default function RecipeContextProvider({ children }) {
       }
 
       await recipeApi.updateRecipe(recipeId, formData);
-      fetchRecipe();
-      fetchRecipes();
+      await fetchRecipe();
+      await fetchRecipes();
       navigate(`/recipe/${recipeId}`);
       setLoading(false);
     } catch (err) {
@@ -373,7 +422,7 @@ export default function RecipeContextProvider({ children }) {
       setLoading(true);
       e.preventDefault();
       await recipeApi.deleteRecipe(recipeId);
-      fetchRecipes();
+      await fetchRecipes();
       navigate(`/profile/${authUser.id}`);
       setLoading(false);
     } catch (err) {
@@ -393,6 +442,32 @@ export default function RecipeContextProvider({ children }) {
     setInstructionList((prev) => [...prev, { id: nanoid() }]);
   };
 
+  const handleChangeInclude = (e) => {
+    e.target.value = e.target.value.toUpperCase().trim();
+    setInclude(e.target.value);
+    setIncludeObj({ ...includeObj, ingredient: e.target.value });
+  };
+
+  const handleAddInclude = () => {
+    if (include && include.trim() !== "") {
+      console.log("include", include);
+      setIncludeList((prev) => [...prev, includeObj]);
+      setInclude("");
+      setIncludeObj({ id: nanoid(), ingredient: "" });
+      console.log("ccccllll");
+      console.log("include2", include);
+    }
+  };
+
+  const handleDeleteInclude = (id) => {
+    console.log("eee");
+    setIncludeList(includeList.filter((el) => el.id !== id));
+  };
+
+  const renderIncludeList = includeList?.map((el) => (
+    <IncludeButton id={el.id} key={el.id} ingredient={el.ingredient} />
+  ));
+
   const renderIngredientList = ingredientList?.map((el) => (
     <InputIngredient id={el.id} key={el.id} value={el} />
   ));
@@ -406,6 +481,7 @@ export default function RecipeContextProvider({ children }) {
       key={el.id}
       name={el.name}
       recipeImage={el.infos?.[0]?.image}
+      ingredients={el.ingredients}
     />
   ));
 
@@ -442,6 +518,11 @@ export default function RecipeContextProvider({ children }) {
         searchName,
         setSearchName,
         error,
+        include,
+        handleChangeInclude,
+        handleAddInclude,
+        handleDeleteInclude,
+        renderIncludeList,
       }}
     >
       {children}
