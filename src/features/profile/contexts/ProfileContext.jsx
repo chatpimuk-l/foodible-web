@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import * as userApi from "../../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
 import validateUserProfile from "../validators/validate-userProfile";
+import useAuth from "../../auth/hooks/useAuth";
 
 export const ProfileContext = createContext();
 
@@ -18,6 +19,10 @@ export default function ProfileContextProvider({ children }) {
   const { targetUserId } = useParams();
 
   const userProfileImageFileEl = useRef(null);
+
+  const { authUser } = useAuth();
+
+  const isAuthUserIdMatchTargetUserId = +targetUserId == authUser?.id;
 
   const handleInputChange = (e) => {
     setUserProfile({
@@ -122,6 +127,7 @@ export default function ProfileContextProvider({ children }) {
         userProfileImageFileEl,
         loading,
         error,
+        isAuthUserIdMatchTargetUserId,
       }}
     >
       {children}

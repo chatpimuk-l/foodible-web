@@ -21,15 +21,7 @@ export default function RecipeContextProvider({ children }) {
   const [instructionList, setInstructionList] = useState([{ id: nanoid() }]);
   const [recipe, setRecipe] = useState({});
   const [recipeImage, setRecipeImage] = useState(recipe.image || null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState({});
-
   const [recipes, setRecipes] = useState([]);
-
-  const recipeImageFileEl = useRef(null);
-
-  const { recipeId, targetUserId } = useParams();
-
   const [recipeObj, setRecipeObj] = useState({});
   const [writerRecipes, setWriterRecipes] = useState([]);
 
@@ -41,7 +33,15 @@ export default function RecipeContextProvider({ children }) {
   });
   const [includeList, setIncludeList] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({});
+
   const [isOpenEdit, setIsOpenEdit] = useState(false);
+  const [isRecipeBelongToAuthUser, setIsRecipeBelongToAuthUser] =
+    useState(false);
+
+  const recipeImageFileEl = useRef(null);
+  const { recipeId, targetUserId } = useParams();
 
   const clearStates = () => {
     setRecipe({});
@@ -51,7 +51,6 @@ export default function RecipeContextProvider({ children }) {
     setInstructionList([{ id: nanoid() }]);
   };
 
-  // useEffect(() => {
   const fetchRecipesBySearchName = async () => {
     try {
       setLoading(true);
@@ -66,10 +65,7 @@ export default function RecipeContextProvider({ children }) {
       setLoading(false);
     }
   };
-  // fetchRecipesBySearchName();
-  // }, [searchName]);
 
-  // useEffect(() => {
   const fetchRecipesByInclude = async () => {
     try {
       setLoading(true);
@@ -98,8 +94,6 @@ export default function RecipeContextProvider({ children }) {
       setLoading(false);
     }
   };
-  //   fetchRecipesByInclude();
-  // }, [includeList]);
 
   const fetchRecipesByNameAndInclude = async () => {
     try {
@@ -145,22 +139,23 @@ export default function RecipeContextProvider({ children }) {
     }
   };
 
-  const isInclude = includeList.length !== 0;
-  useEffect(() => {
-    console.log("in useeff");
-    if (searchName && isInclude) {
-      fetchRecipesByNameAndInclude();
+  const fetchRecipesByTargetUserId = async () => {
+    if (targetUserId) {
+      try {
+        setLoading(true);
+        const recipesByUserId = await recipeApi.getRecipesByUserId(
+          +targetUserId
+        );
+        setWriterRecipes(recipesByUserId.data?.recipes);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+        console.log("writerRecipes", writerRecipes);
+      }
     }
-    if (searchName && !isInclude) {
-      fetchRecipesBySearchName();
-    }
-    if (!searchName && isInclude) {
-      fetchRecipesByInclude();
-    }
-    if (!searchName && !isInclude) {
-      fetchRecipes();
-    }
-  }, [searchName, includeList]);
+  };
 
   const fetchRecipe = async () => {
     if (recipeId) {
@@ -185,6 +180,9 @@ export default function RecipeContextProvider({ children }) {
         setRecipeImage(recipeById.data.recipe.infos?.[0]?.image);
         setIngredientList(recipeById.data.recipe?.ingredients);
         setInstructionList(recipeById.data.recipe?.instructions);
+        setIsRecipeBelongToAuthUser(
+          recipeById.data.recipe?.userId === authUser?.id
+        );
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -196,6 +194,23 @@ export default function RecipeContextProvider({ children }) {
     }
   };
 
+  const isInclude = includeList.length !== 0;
+  useEffect(() => {
+    console.log("in useeff");
+    if (searchName && isInclude) {
+      fetchRecipesByNameAndInclude();
+    }
+    if (searchName && !isInclude) {
+      fetchRecipesBySearchName();
+    }
+    if (!searchName && isInclude) {
+      fetchRecipesByInclude();
+    }
+    if (!searchName && !isInclude) {
+      fetchRecipes();
+    }
+  }, [searchName, includeList]);
+
   useEffect(() => {
     console.log(2121);
     fetchRecipe();
@@ -206,23 +221,6 @@ export default function RecipeContextProvider({ children }) {
     fetchRecipe();
   }, [isOpenEdit]);
 
-  const fetchRecipesByTargetUserId = async () => {
-    if (targetUserId) {
-      try {
-        setLoading(true);
-        const recipesByUserId = await recipeApi.getRecipesByUserId(
-          +targetUserId
-        );
-        setWriterRecipes(recipesByUserId.data?.recipes);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-        console.log("writerRecipes", writerRecipes);
-      }
-    }
-  };
   useEffect(() => {
     fetchRecipesByTargetUserId();
   }, [targetUserId]);
@@ -463,6 +461,7 @@ export default function RecipeContextProvider({ children }) {
       await recipeApi.deleteRecipe(recipeId);
       await fetchRecipes();
       navigate(`/profile/${authUser.id}`);
+      toast("Deleted");
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -566,6 +565,7 @@ export default function RecipeContextProvider({ children }) {
         clearStates,
         isOpenEdit,
         setIsOpenEdit,
+        isRecipeBelongToAuthUser,
       }}
     >
       {children}
