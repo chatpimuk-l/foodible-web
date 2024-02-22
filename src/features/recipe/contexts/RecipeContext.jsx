@@ -43,16 +43,6 @@ export default function RecipeContextProvider({ children }) {
 
   const [isOpenEdit, setIsOpenEdit] = useState(false);
 
-  // useEffect(() => {
-  //   const run = async () => {
-  //     if (currentPath.includes("recipe") && currentPath.includes("edit")) {
-  //       console.log(7878);
-  //       await fetchRecipe();
-  //     }
-  //   };
-  //   run();
-  // }, [currentPath]);
-
   const clearStates = () => {
     setRecipe({});
     setRecipeObj({});
@@ -61,88 +51,115 @@ export default function RecipeContextProvider({ children }) {
     setInstructionList([{ id: nanoid() }]);
   };
 
-  useEffect(() => {
-    const fetchRecipesBySearchName = async () => {
-      try {
-        setLoading(true);
-        const recipesBySearchName = await recipeApi.getRecipesBySearchName(
-          searchName
-        );
-        setRecipes(recipesBySearchName.data?.recipes);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRecipesBySearchName();
-  }, [searchName]);
+  // useEffect(() => {
+  const fetchRecipesBySearchName = async () => {
+    try {
+      setLoading(true);
+      const recipesBySearchName = await recipeApi.getRecipesBySearchName(
+        searchName
+      );
+      setRecipes(recipesBySearchName.data?.recipes);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  // fetchRecipesBySearchName();
+  // }, [searchName]);
 
   // useEffect(() => {
-  //   const fetchRecipesByInclude = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const newIncludeList = includeList.reduce((acc, cur) => {
-  //         acc.push(cur.ingredient);
-  //         return acc;
-  //       }, []);
-  //       const stringifiedIncludeList = JSON.stringify(newIncludeList);
-  //       console.log("stringifiedIncludeList", stringifiedIncludeList);
-  //       const recipesByInclude = await recipeApi.getRecipesByInclude(
-  //         stringifiedIncludeList
-  //       );
-  //       console.log("recipesByInclude", recipesByInclude);
-  //       const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
-  //         (el) => ({
-  //           id: el.id,
-  //           name: el.name,
-  //           infos: [{ image: el.infos?.[0].image }],
-  //           ingredients: el.ingredients,
-  //         })
-  //       );
-  //       setRecipes(editedRecipesByInclude);
-  //       setLoading(false);
-  //     } catch (err) {
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  const fetchRecipesByInclude = async () => {
+    try {
+      setLoading(true);
+      const newIncludeList = includeList.reduce((acc, cur) => {
+        acc.push(cur.ingredient);
+        return acc;
+      }, []);
+      const stringifiedIncludeList = JSON.stringify(newIncludeList);
+      console.log("stringifiedIncludeList", stringifiedIncludeList);
+      const recipesByInclude = await recipeApi.getRecipesByInclude(
+        stringifiedIncludeList
+      );
+      console.log("recipesByInclude", recipesByInclude);
+      const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
+        (el) => ({
+          id: el.id,
+          name: el.name,
+          infos: [{ image: el.infos?.[0].image }],
+          ingredients: el.ingredients,
+        })
+      );
+      setRecipes(editedRecipesByInclude);
+      setLoading(false);
+    } catch (err) {
+    } finally {
+      setLoading(false);
+    }
+  };
   //   fetchRecipesByInclude();
   // }, [includeList]);
 
+  const fetchRecipesByNameAndInclude = async () => {
+    try {
+      setLoading(true);
+      const newIncludeList = includeList.reduce((acc, cur) => {
+        acc.push(cur.ingredient);
+        return acc;
+      }, []);
+      const stringifiedIncludeList = JSON.stringify(newIncludeList);
+      console.log("stringifiedIncludeList", stringifiedIncludeList);
+      const recipesByInclude = await recipeApi.getRecipesByNameAndInclude(
+        searchName,
+        stringifiedIncludeList
+      );
+      console.log("recipesByInclude", recipesByInclude);
+      const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
+        (el) => ({
+          id: el.id,
+          name: el.name,
+          infos: [{ image: el.infos?.[0].image }],
+          ingredients: el.ingredients,
+        })
+      );
+      setRecipes(editedRecipesByInclude);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRecipes = async () => {
+    try {
+      setLoading(true);
+      const res = await recipeApi.getRecipes();
+      setRecipes(res.data.recipes);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isInclude = includeList.length !== 0;
   useEffect(() => {
-    const fetchRecipesByNameAndInclude = async () => {
-      try {
-        setLoading(true);
-        const newIncludeList = includeList.reduce((acc, cur) => {
-          acc.push(cur.ingredient);
-          return acc;
-        }, []);
-        const stringifiedIncludeList = JSON.stringify(newIncludeList);
-        console.log("stringifiedIncludeList", stringifiedIncludeList);
-        const recipesByInclude = await recipeApi.getRecipesByNameAndInclude(
-          searchName,
-          stringifiedIncludeList
-        );
-        console.log("recipesByInclude", recipesByInclude);
-        const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
-          (el) => ({
-            id: el.id,
-            name: el.name,
-            infos: [{ image: el.infos?.[0].image }],
-            ingredients: el.ingredients,
-          })
-        );
-        setRecipes(editedRecipesByInclude);
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRecipesByNameAndInclude();
+    console.log("in useeff");
+    if (searchName && isInclude) {
+      fetchRecipesByNameAndInclude();
+    }
+    if (searchName && !isInclude) {
+      fetchRecipesBySearchName();
+    }
+    if (!searchName && isInclude) {
+      fetchRecipesByInclude();
+    }
+    if (!searchName && !isInclude) {
+      fetchRecipes();
+    }
   }, [searchName, includeList]);
 
   const fetchRecipe = async () => {
@@ -209,19 +226,6 @@ export default function RecipeContextProvider({ children }) {
   useEffect(() => {
     fetchRecipesByTargetUserId();
   }, [targetUserId]);
-
-  const fetchRecipes = async () => {
-    try {
-      setLoading(true);
-      const res = await recipeApi.getRecipes();
-      setRecipes(res.data.recipes);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchRecipes();

@@ -15,11 +15,11 @@ export const getRecipeByRecipeId = (recipeId) =>
 export const getRecipesByUserId = (userId) =>
   axios.get(`/recipes/users/${userId}`);
 
-// export const getRecipesBySearchName = (searchName) =>
-//   axios.get(`/recipes/?name=${searchName}`);
+export const getRecipesBySearchName = (searchName) =>
+  axios.get(`/recipes/?name=${searchName}`);
 
-// export const getRecipesByInclude = (includeList) =>
-//   axios.get(`/recipes/?include=${includeList}`);
+export const getRecipesByInclude = (includeList) =>
+  axios.get(`/recipes/?include=${includeList}`);
 
 export const getRecipesByNameAndInclude = (searchName, includeList) =>
   axios.get(`/recipes/?name=${searchName}&include=${includeList}`);
