@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 
 import * as userApi from "../../../api/user";
 import { useNavigate, useParams } from "react-router-dom";
+import validateUserProfile from "../validators/validate-userProfile";
 
 export const ProfileContext = createContext();
 
@@ -12,6 +13,7 @@ export default function ProfileContextProvider({ children }) {
   const [userProfile, setUserProfile] = useState({});
   const [userProfileImage, setUserProfileImage] = useState(userProfile.image);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({});
 
   const { targetUserId } = useParams();
 
@@ -42,13 +44,30 @@ export default function ProfileContextProvider({ children }) {
   };
 
   const handleCancel = (e) => {
-    navigate(`/profile/${userProfile.id}`);
+    try {
+      setLoading(true);
+      fetchUserProfile();
+      setLoading(false);
+      navigate(`/profile/${userProfile.id}`);
+    } catch (err) {
+      console.log(err);
+      toast(err.response?.data.message);
+    } finally {
+      setLoading(false);
+      setError({});
+    }
   };
 
   const handleEditFormSubmit = async (e) => {
     try {
       setLoading(true);
       e.preventDefault();
+      const validateError = validateUserProfile(userProfile);
+      if (validateError) {
+        console.log("validateError userprofile", validateError);
+        return setError(validateError);
+      }
+      console.log(99999);
       const formData = new FormData();
       formData.append("name", userProfile.name);
       formData.append("email", userProfile.email);
@@ -57,6 +76,7 @@ export default function ProfileContextProvider({ children }) {
       const res = await userApi.updateUserByTargetUserId(formData);
       res.data.image = userProfileImage;
       setUserProfile((prev) => ({ ...prev, ...res.data }));
+      setError({});
       navigate(`/profile/${userProfile.id}`);
       setLoading(false);
     } catch (err) {
@@ -67,25 +87,24 @@ export default function ProfileContextProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (targetUserId) {
-        try {
-          setLoading("true");
-          console.log("targetUserId", targetUserId);
-          const result = await userApi.getUserProfileByTargetUserId(
-            targetUserId
-          );
-          setUserProfile(result.data.userProfile);
-          setUserProfileImage(result.data.userProfile.image);
-          setLoading(false);
-        } catch (err) {
-          console.log(err);
-        } finally {
-          setLoading(false);
-        }
+  const fetchUserProfile = async () => {
+    if (targetUserId) {
+      try {
+        setLoading("true");
+        console.log("targetUserId", targetUserId);
+        const result = await userApi.getUserProfileByTargetUserId(targetUserId);
+        setUserProfile(result.data.userProfile);
+        setUserProfileImage(result.data.userProfile.image);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchUserProfile();
   }, [targetUserId]);
 
@@ -102,6 +121,7 @@ export default function ProfileContextProvider({ children }) {
         handleEditFormSubmit,
         userProfileImageFileEl,
         loading,
+        error,
       }}
     >
       {children}

@@ -15,6 +15,7 @@ export default function EditProfileForm() {
     handleEditFormSubmit,
     userProfileImageFileEl,
     loading,
+    error,
   } = useProfile();
 
   if (loading) {
@@ -42,7 +43,7 @@ export default function EditProfileForm() {
         value={userProfile.name}
         onChange={handleInputChange}
         uppercase
-        // errorMessage={error.email}
+        errorMessage={error.name}
       />
       {/* <Input
         label="EMAIL"

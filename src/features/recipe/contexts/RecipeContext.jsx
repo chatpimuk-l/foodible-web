@@ -8,6 +8,8 @@ import useAuth from "../../../features/auth/hooks/useAuth";
 import * as recipeApi from "../../../api/recipe";
 import HorizontalCard from "../../../components/HorizontalCard";
 import { useParams } from "react-router-dom";
+import validateRecipe from "../validators/validate-recipe";
+import { useLocation } from "react-router-dom";
 
 export const RecipeContext = createContext();
 
@@ -20,6 +22,7 @@ export default function RecipeContextProvider({ children }) {
   const [recipe, setRecipe] = useState({});
   const [recipeImage, setRecipeImage] = useState(recipe.image || null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({});
 
   const [recipes, setRecipes] = useState([]);
 
@@ -31,6 +34,26 @@ export default function RecipeContextProvider({ children }) {
   const [writerRecipes, setWriterRecipes] = useState([]);
 
   const [searchName, setSearchName] = useState("");
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (currentPath.includes("/recipe/create")) {
+      console.log(3636);
+      clearStates();
+      // handleRefresh();
+      // navigate("/recipe/create", { replace: true });
+    }
+    if (currentPath.includes("recipe") && currentPath.includes("edit")) {
+      console.log(7878);
+      fetchRecipe();
+    }
+  }, [currentPath]);
 
   useEffect(() => {
     const fetchRecipesBySearchName = async () => {
@@ -85,8 +108,14 @@ export default function RecipeContextProvider({ children }) {
   };
 
   useEffect(() => {
+    console.log(2121);
     fetchRecipe();
   }, [recipeId]);
+
+  useEffect(() => {
+    console.log(4545);
+    fetchRecipe();
+  }, []);
 
   useEffect(() => {
     const fetchRecipesByTargetUserId = async () => {
@@ -126,6 +155,15 @@ export default function RecipeContextProvider({ children }) {
     fetchRecipes();
   }, []);
 
+  const clearStates = () => {
+    console.log(234567);
+    setRecipe({});
+    setIngredientList([{ id: nanoid() }]);
+    setInstructionList([{ id: nanoid() }]);
+    setRecipeImage(null);
+    setRecipeObj({});
+  };
+
   const handleRecipeImageChange = (e) => {
     setRecipe({
       ...recipe,
@@ -144,10 +182,38 @@ export default function RecipeContextProvider({ children }) {
   };
 
   const handleCancel = (e) => {
-    navigate(`/profile/${authUser.id}`);
+    try {
+      setLoading(true);
+      fetchRecipe();
+      navigate(`/profile/${authUser.id}`);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      toast(err.response?.data.message);
+    } finally {
+      setError(false);
+      setRecipe({});
+      setIngredientList([{ id: nanoid() }]);
+      setInstructionList([{ id: nanoid() }]);
+      setLoading(false);
+    }
   };
   const handleCancelEditRecipeForm = (e) => {
-    navigate(`/recipe/${recipeId}`);
+    try {
+      setLoading(true);
+      fetchRecipe();
+      navigate(`/recipe/${recipeId}`);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      toast(err.response?.data.message);
+    } finally {
+      setError(false);
+      setRecipe({});
+      setIngredientList([{ id: nanoid() }]);
+      setInstructionList([{ id: nanoid() }]);
+      setLoading(false);
+    }
   };
 
   const handleIngredientDelete = (id) => {
@@ -169,6 +235,20 @@ export default function RecipeContextProvider({ children }) {
       console.log("handleRecipeFormSubmit");
       setLoading(true);
       e.preventDefault();
+
+      console.log("recipe", recipe);
+      const validateError = validateRecipe({
+        ...recipe,
+        image: recipe.image,
+        ingredients: ingredientList,
+        instructions: instructionList,
+      });
+      console.log("validateError", validateError);
+      if (validateError) {
+        console.log("error", error);
+        console.log("validateError recipe", validateError);
+        return setError(validateError);
+      }
 
       const formData = new FormData();
       formData.append("name", recipe.name);
@@ -206,6 +286,7 @@ export default function RecipeContextProvider({ children }) {
       await recipeApi.createRecipe(formData);
       fetchRecipes();
       navigate(`/profile/${authUser.id}`);
+      setError({});
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -222,6 +303,20 @@ export default function RecipeContextProvider({ children }) {
       console.log("handleSubmitEditRecipeForm");
       setLoading(true);
       e.preventDefault();
+
+      console.log("recipe", recipe);
+      const validateError = validateRecipe({
+        ...recipe,
+        image: recipe.image,
+        ingredients: ingredientList,
+        instructions: instructionList,
+      });
+      console.log("validateError", validateError);
+      if (validateError) {
+        console.log("error", error);
+        console.log("validateError recipe", validateError);
+        return setError(validateError);
+      }
 
       const formData = new FormData();
       formData.append("name", recipe.name);
@@ -318,6 +413,7 @@ export default function RecipeContextProvider({ children }) {
     <RecipeContext.Provider
       value={{
         recipe,
+        setRecipe,
         ingredientList,
         instructionList,
         setIngredientList,
@@ -345,6 +441,7 @@ export default function RecipeContextProvider({ children }) {
         writerRecipes,
         searchName,
         setSearchName,
+        error,
       }}
     >
       {children}

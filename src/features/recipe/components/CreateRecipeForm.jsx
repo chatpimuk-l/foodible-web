@@ -4,6 +4,7 @@ import InputImage from "../../../components/InputImage";
 import Button from "../../../components/Button";
 import useRecipe from "../hooks/useRecipe";
 import Spinner from "../../../components/Spinner";
+import React, { useEffect } from "react";
 
 export default function CreateRecipeForm() {
   const {
@@ -20,6 +21,7 @@ export default function CreateRecipeForm() {
     handleCancel,
     handleRecipeFormSubmit,
     loading,
+    error,
   } = useRecipe();
 
   if (loading) {
@@ -40,7 +42,7 @@ export default function CreateRecipeForm() {
         name="name"
         value={recipe?.name}
         onChange={handleRecipeInputChange}
-        // errorMessage={error.email}
+        errorMessage={error.name}
       />
 
       <Input
@@ -50,6 +52,7 @@ export default function CreateRecipeForm() {
         name="description"
         value={recipe?.description}
         onChange={handleRecipeInputChange}
+        errorMessage={error.description}
       />
       <input
         type="file"
@@ -63,7 +66,7 @@ export default function CreateRecipeForm() {
         onClear={handleRecipeImageClear}
         type="button"
         image={recipeImage}
-        // errorMessage={error.email}
+        errorMessage={error.image}
       />
       <div className="w-64">
         <Input
@@ -72,6 +75,7 @@ export default function CreateRecipeForm() {
           name="prepTime"
           value={recipe?.prepTime}
           onChange={handleRecipeInputChange}
+          errorMessage={error.prepTime}
         />
         <Input
           label="COOK TIME (mins)"
@@ -79,6 +83,7 @@ export default function CreateRecipeForm() {
           name="cookTime"
           value={recipe?.cookTime}
           onChange={handleRecipeInputChange}
+          errorMessage={error.cookTime}
         />
         <Input
           label="SERVINGS (ppl)"
@@ -86,6 +91,7 @@ export default function CreateRecipeForm() {
           name="serving"
           value={recipe?.serving}
           onChange={handleRecipeInputChange}
+          errorMessage={error.serving}
         />
       </div>
 
@@ -116,6 +122,16 @@ export default function CreateRecipeForm() {
         </Button>
       </div>
       {renderIngredientList}
+      {error.ingredients &&
+        (error.ingredients.includes("number") ? (
+          <span className="font-medium text-md text-red-500">
+            AMOUNT must be a number.
+          </span>
+        ) : (
+          <span className="font-medium text-md text-red-500">
+            INGREDIENT, AMOUNT, and UNIT are required.
+          </span>
+        ))}
       <div className="self-start">
         <Button small onClick={handelAddIngredientList}>
           +
@@ -128,7 +144,11 @@ export default function CreateRecipeForm() {
       </div>
 
       {renderInstructionList}
-
+      {error.instructions && (
+        <p className="font-medium text-md text-red-500">
+          INSTRUCTION is required. INSTUCTION IMAGE is optional.
+        </p>
+      )}
       <div className="self-start">
         <Button small onClick={handelAddInstructionList}>
           +
@@ -141,6 +161,7 @@ export default function CreateRecipeForm() {
         name="tip"
         value={recipe?.tip}
         onChange={handleRecipeInputChange}
+        errorMessage={error.tip}
       />
     </Form>
   );
