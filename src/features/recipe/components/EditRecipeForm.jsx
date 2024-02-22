@@ -4,6 +4,7 @@ import InputImage from "../../../components/InputImage";
 import Button from "../../../components/Button";
 import useRecipe from "../hooks/useRecipe";
 import Spinner from "../../../components/Spinner";
+import { useEffect } from "react";
 
 export default function EditRecipeForm() {
   const {
@@ -20,7 +21,14 @@ export default function EditRecipeForm() {
     handleCancelEditRecipeForm,
     handleSubmitEditRecipeForm,
     loading,
+    error,
+    setIsOpenEdit,
   } = useRecipe();
+
+  useEffect(() => {
+    setIsOpenEdit(true);
+    return () => setIsOpenEdit(false);
+  }, []);
 
   if (loading) {
     return <Spinner />;
@@ -40,7 +48,7 @@ export default function EditRecipeForm() {
         name="name"
         value={recipe.name}
         onChange={handleRecipeInputChange}
-        // errorMessage={error.email}
+        errorMessage={error.name}
       />
       <Input
         textarea
@@ -49,6 +57,7 @@ export default function EditRecipeForm() {
         name="description"
         value={recipe?.description}
         onChange={handleRecipeInputChange}
+        errorMessage={error.description}
       />
       <input
         type="file"
@@ -62,7 +71,7 @@ export default function EditRecipeForm() {
         onClear={handleRecipeImageClear}
         type="button"
         image={recipeImage}
-        // errorMessage={error.email}
+        errorMessage={error.image}
       />
       <div className="w-64">
         <Input
@@ -71,6 +80,7 @@ export default function EditRecipeForm() {
           name="prepTime"
           value={recipe?.prepTime}
           onChange={handleRecipeInputChange}
+          errorMessage={error.prepTime}
         />
         <Input
           label="COOK TIME (mins)"
@@ -78,6 +88,7 @@ export default function EditRecipeForm() {
           name="cookTime"
           value={recipe?.cookTime}
           onChange={handleRecipeInputChange}
+          errorMessage={error.cookTime}
         />
         <Input
           label="SERVINGS (ppl)"
@@ -85,6 +96,7 @@ export default function EditRecipeForm() {
           name="serving"
           value={recipe?.serving}
           onChange={handleRecipeInputChange}
+          errorMessage={error.serving}
         />
       </div>
       <div className="flex gap-3">
@@ -114,6 +126,16 @@ export default function EditRecipeForm() {
         </Button>
       </div>
       {renderIngredientList}
+      {error.ingredients &&
+        (error.ingredients.includes("number") ? (
+          <span className="font-medium text-md text-red-500">
+            AMOUNT must be a number.
+          </span>
+        ) : (
+          <span className="font-medium text-md text-red-500">
+            INGREDIENT, AMOUNT, and UNIT are required.
+          </span>
+        ))}
       <div className="self-start">
         <Button small onClick={handelAddIngredientList}>
           +
@@ -125,6 +147,11 @@ export default function EditRecipeForm() {
         </div>
       </div>
       {renderInstructionList}
+      {error.instructions && (
+        <p className="font-medium text-md text-red-500">
+          INSTRUCTION is required. INSTUCTION IMAGE is optional.
+        </p>
+      )}
       <div className="self-start">
         <Button small onClick={handelAddInstructionList}>
           +
@@ -136,6 +163,7 @@ export default function EditRecipeForm() {
         name="tip"
         value={recipe?.tip}
         onChange={handleRecipeInputChange}
+        errorMessage={error.tip}
       />
     </Form>
   );

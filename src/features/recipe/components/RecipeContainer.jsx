@@ -9,9 +9,18 @@ import RecipeTip from "./RecipeTip";
 import RecipeWriter from "./RecipeWriter";
 import RecipeWriterMore from "./RecipeWriterMore";
 import useRecipe from "../hooks/useRecipe";
+import { useEffect } from "react";
 
 export default function RecipeContainer() {
-  const { recipeObj, writerRecipes } = useRecipe();
+  const { recipeObj, writerRecipes, clearStates, isOpenEdit } = useRecipe();
+
+  useEffect(() => {
+    return () => {
+      if (isOpenEdit) {
+        clearStates();
+      }
+    };
+  }, []);
 
   return (
     <>

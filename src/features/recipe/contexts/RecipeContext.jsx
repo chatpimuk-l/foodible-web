@@ -9,7 +9,6 @@ import * as recipeApi from "../../../api/recipe";
 import HorizontalCard from "../../../components/HorizontalCard";
 import { useParams } from "react-router-dom";
 import validateRecipe from "../validators/validate-recipe";
-import { useLocation } from "react-router-dom";
 import IncludeButton from "../components/IncludeButton";
 
 export const RecipeContext = createContext();
@@ -42,28 +41,25 @@ export default function RecipeContextProvider({ children }) {
   });
   const [includeList, setIncludeList] = useState([]);
 
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const [isOpenEdit, setIsOpenEdit] = useState(false);
 
-  const handleRefresh = () => {
-    window.location.reload();
+  // useEffect(() => {
+  //   const run = async () => {
+  //     if (currentPath.includes("recipe") && currentPath.includes("edit")) {
+  //       console.log(7878);
+  //       await fetchRecipe();
+  //     }
+  //   };
+  //   run();
+  // }, [currentPath]);
+
+  const clearStates = () => {
+    setRecipe({});
+    setRecipeObj({});
+    setRecipeImage(null);
+    setIngredientList([{ id: nanoid() }]);
+    setInstructionList([{ id: nanoid() }]);
   };
-
-  useEffect(() => {
-    const run = async () => {
-      if (currentPath.includes("/recipe/create")) {
-        console.log(3636);
-        clearStates();
-        // handleRefresh();
-        // navigate("/recipe/create", { replace: true });
-      }
-      if (currentPath.includes("recipe") && currentPath.includes("edit")) {
-        console.log(7878);
-        await fetchRecipe();
-      }
-    };
-    run();
-  }, [currentPath]);
 
   useEffect(() => {
     const fetchRecipesBySearchName = async () => {
@@ -83,8 +79,40 @@ export default function RecipeContextProvider({ children }) {
     fetchRecipesBySearchName();
   }, [searchName]);
 
+  // useEffect(() => {
+  //   const fetchRecipesByInclude = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const newIncludeList = includeList.reduce((acc, cur) => {
+  //         acc.push(cur.ingredient);
+  //         return acc;
+  //       }, []);
+  //       const stringifiedIncludeList = JSON.stringify(newIncludeList);
+  //       console.log("stringifiedIncludeList", stringifiedIncludeList);
+  //       const recipesByInclude = await recipeApi.getRecipesByInclude(
+  //         stringifiedIncludeList
+  //       );
+  //       console.log("recipesByInclude", recipesByInclude);
+  //       const editedRecipesByInclude = recipesByInclude.data?.recipes?.map(
+  //         (el) => ({
+  //           id: el.id,
+  //           name: el.name,
+  //           infos: [{ image: el.infos?.[0].image }],
+  //           ingredients: el.ingredients,
+  //         })
+  //       );
+  //       setRecipes(editedRecipesByInclude);
+  //       setLoading(false);
+  //     } catch (err) {
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchRecipesByInclude();
+  // }, [includeList]);
+
   useEffect(() => {
-    const fetchRecipesByInclude = async () => {
+    const fetchRecipesByNameAndInclude = async () => {
       try {
         setLoading(true);
         const newIncludeList = includeList.reduce((acc, cur) => {
@@ -93,7 +121,8 @@ export default function RecipeContextProvider({ children }) {
         }, []);
         const stringifiedIncludeList = JSON.stringify(newIncludeList);
         console.log("stringifiedIncludeList", stringifiedIncludeList);
-        const recipesByInclude = await recipeApi.getRecipesByInclude(
+        const recipesByInclude = await recipeApi.getRecipesByNameAndInclude(
+          searchName,
           stringifiedIncludeList
         );
         console.log("recipesByInclude", recipesByInclude);
@@ -108,12 +137,13 @@ export default function RecipeContextProvider({ children }) {
         setRecipes(editedRecipesByInclude);
         setLoading(false);
       } catch (err) {
+        console.log(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchRecipesByInclude();
-  }, [includeList]);
+    fetchRecipesByNameAndInclude();
+  }, [searchName, includeList]);
 
   const fetchRecipe = async () => {
     if (recipeId) {
@@ -157,7 +187,7 @@ export default function RecipeContextProvider({ children }) {
   useEffect(() => {
     console.log(4545);
     fetchRecipe();
-  }, []);
+  }, [isOpenEdit]);
 
   const fetchRecipesByTargetUserId = async () => {
     if (targetUserId) {
@@ -196,15 +226,6 @@ export default function RecipeContextProvider({ children }) {
   useEffect(() => {
     fetchRecipes();
   }, []);
-
-  const clearStates = () => {
-    console.log(234567);
-    setRecipe({});
-    setIngredientList([{ id: nanoid() }]);
-    setInstructionList([{ id: nanoid() }]);
-    setRecipeImage(null);
-    setRecipeObj({});
-  };
 
   const handleRecipeImageChange = (e) => {
     setRecipe({
@@ -267,16 +288,12 @@ export default function RecipeContextProvider({ children }) {
 
   const handleRecipeInputChange = (e) => {
     if (e.target.name === "name") {
-      setRecipe({
-        ...recipe,
-        [e.target.name]: e.target.value.toUpperCase(),
-      });
-    } else {
-      setRecipe({
-        ...recipe,
-        [e.target.name]: e.target.value,
-      });
+      e.target.value = e.target.value.toUpperCase();
     }
+    setRecipe({
+      ...recipe,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleRecipeFormSubmit = async (e) => {
@@ -301,12 +318,21 @@ export default function RecipeContextProvider({ children }) {
 
       const formData = new FormData();
       formData.append("name", recipe.name);
-      formData.append("description", recipe.description);
+      if (recipe.description && recipe.description.trim() !== "") {
+        formData.append("description", recipe.description);
+      } else {
+        formData.append("description", "");
+      }
       formData.append("recipeImage", recipe.image);
       formData.append("prepTime", recipe.prepTime);
       formData.append("cookTime", recipe.cookTime);
       formData.append("serving", recipe.serving);
-      formData.append("tip", recipe.tip);
+      if (recipe.tip && recipe.tip.trim() !== "") {
+        formData.append("tip", recipe.tip);
+      } else {
+        formData.append("tip", "");
+      }
+
       const ingredients = ingredientList.reduce((acc, el) => {
         acc.push({
           ingredient: el.ingredient,
@@ -369,12 +395,21 @@ export default function RecipeContextProvider({ children }) {
 
       const formData = new FormData();
       formData.append("name", recipe.name);
-      formData.append("description", recipe.description);
+      if (recipe.description && recipe.description.trim() !== "") {
+        formData.append("description", recipe.description);
+      } else {
+        formData.append("description", "");
+      }
       formData.append("recipeImage", recipe.image);
       formData.append("prepTime", recipe.prepTime);
       formData.append("cookTime", recipe.cookTime);
       formData.append("serving", recipe.serving);
-      formData.append("tip", recipe.tip);
+      if (recipe.tip && recipe.tip.trim() !== "") {
+        formData.append("tip", recipe.tip);
+      } else {
+        formData.append("tip", "");
+      }
+
       const ingredients = ingredientList.reduce((acc, el) => {
         acc.push({
           ingredient: el.ingredient,
@@ -514,6 +549,7 @@ export default function RecipeContextProvider({ children }) {
         setLoading,
         renderRecipes,
         recipeObj,
+        setRecipeObj,
         writerRecipes,
         searchName,
         setSearchName,
@@ -523,6 +559,9 @@ export default function RecipeContextProvider({ children }) {
         handleAddInclude,
         handleDeleteInclude,
         renderIncludeList,
+        clearStates,
+        isOpenEdit,
+        setIsOpenEdit,
       }}
     >
       {children}
