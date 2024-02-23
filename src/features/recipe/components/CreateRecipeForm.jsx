@@ -102,13 +102,15 @@ export default function CreateRecipeForm() {
       </div>
 
       <div className="flex gap-3">
-        <Input
-          label="INGREDIENT"
-          id="ingredient"
-          name="ingredient"
-          input="hidden"
-          labelClasses="w-[20vw]"
-        />
+        <div className="flex-1">
+          <Input
+            label="INGREDIENT"
+            id="ingredient"
+            name="ingredient"
+            input="hidden"
+            labelClasses="w-[20vw]"
+          />
+        </div>
         <Input
           label="AMOUNT"
           id="amount"

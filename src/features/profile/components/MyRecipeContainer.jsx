@@ -25,7 +25,12 @@ export default function MyRecipeContainer() {
       </div>
       <div>
         <Link to="/recipe/create">
-          <Button bgColor="primary" textColor="black" hoverTextColor="white">
+          <Button
+            small
+            bgColor="primary"
+            textColor="black"
+            hoverTextColor="white"
+          >
             ADD RECIPE
           </Button>
         </Link>

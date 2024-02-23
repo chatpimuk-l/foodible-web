@@ -4,7 +4,12 @@ import useRecipe from "../hooks/useRecipe";
 import { useNavigate } from "react-router-dom";
 
 export default function RecipeHero({ recipeName, recipeImage, recipeId }) {
-  const { handleDeleteRecipe, isRecipeBelongToAuthUser } = useRecipe();
+  const {
+    handleDeleteRecipe,
+    isRecipeBelongToAuthUser,
+    isFav,
+    handleClickFav,
+  } = useRecipe();
   const navigate = useNavigate();
 
   return (
@@ -37,7 +42,17 @@ export default function RecipeHero({ recipeName, recipeImage, recipeId }) {
           </div>
         ) : (
           <div>
-            {/* <i className="fa-regular fa-heart text-5xl text-primary"></i> */}
+            {isFav ? (
+              <i
+                onClick={handleClickFav}
+                className="fa-solid fa-heart text-5xl text-primary"
+              ></i>
+            ) : (
+              <i
+                onClick={handleClickFav}
+                className="fa-regular fa-heart text-5xl text-primary"
+              ></i>
+            )}
           </div>
         )}
         <div className="flex flex-col gap-4">

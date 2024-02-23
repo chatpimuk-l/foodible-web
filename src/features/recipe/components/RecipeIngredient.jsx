@@ -5,13 +5,13 @@ export default function RecipeIngredient({ recipeIngredients }) {
   function Ingredients({ ingredient, amount, unit }) {
     return (
       <div className="flex items-center text-xl">
-        <div className="w-12 pl-4">
+        <div className="w-16 flex justify-center">
           <div className="bg-black w-2 h-2"></div>
         </div>
-        <div className="w-12">
+        <div className="w-14">
           <h5 className="font-black ">{amount}</h5>
         </div>
-        <div className="w-20">
+        <div className="w-24">
           <h5 className="font-black ">{unit}</h5>
         </div>
         <h5
@@ -19,7 +19,7 @@ export default function RecipeIngredient({ recipeIngredients }) {
             console.log("clickkkk");
             handleClickIngredientURL(ingredient);
           }}
-          className="font-semibold "
+          className="font-semibold hover:underline"
         >
           {ingredient}
         </h5>

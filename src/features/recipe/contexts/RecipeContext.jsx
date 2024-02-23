@@ -40,6 +40,7 @@ export default function RecipeContextProvider({ children }) {
   const [isOpenCreate, setIsOpenCreate] = useState(false);
   const [isRecipeBelongToAuthUser, setIsRecipeBelongToAuthUser] =
     useState(false);
+  const [isFav, setIsFav] = useState(false);
 
   const recipeImageFileEl = useRef(null);
   const { recipeId, targetUserId } = useParams();
@@ -528,6 +529,15 @@ export default function RecipeContextProvider({ children }) {
       `https://mart.grab.com/th/th/search?keyword=${ingredient.toLowerCase()}`
     );
 
+  const handleClickFav = () => {
+    if (isFav) {
+      toast("Removed from fav");
+    } else {
+      toast("Added to fav");
+    }
+    setIsFav((prev) => !prev);
+  };
+
   const renderIncludeList = includeList?.map((el) => (
     <IncludeButton id={el.id} key={el.id} ingredient={el.ingredient} />
   ));
@@ -594,6 +604,8 @@ export default function RecipeContextProvider({ children }) {
         setIsOpenCreate,
         isRecipeBelongToAuthUser,
         handleClickIngredientURL,
+        isFav,
+        handleClickFav,
       }}
     >
       {children}
