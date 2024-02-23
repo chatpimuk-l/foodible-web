@@ -12,7 +12,7 @@ import useRecipe from "../hooks/useRecipe";
 import { useEffect } from "react";
 
 export default function RecipeContainer() {
-  const { recipeObj, writerRecipes, clearStates, isOpenEdit } = useRecipe();
+  const { recipeObj, writerRecipes, ratingsValue } = useRecipe();
 
   // useEffect(() => {
   //   return () => {
@@ -39,6 +39,7 @@ export default function RecipeContainer() {
               recipeServing={recipeObj.infos?.[0]?.serving}
               recipePrepTime={recipeObj.infos?.[0]?.prepTime}
               recipeCookTime={recipeObj.infos?.[0]?.cookTime}
+              ratingsValue={ratingsValue}
             />
           </div>
           {recipeObj.infos?.[0]?.description && (

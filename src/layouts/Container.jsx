@@ -8,15 +8,15 @@ import { Outlet } from "react-router-dom";
 export default function Container() {
   return (
     <>
-      <CommentContextProvider>
-        <ProfileContextProvider>
-          <RecipeContextProvider>
+      <ProfileContextProvider>
+        <RecipeContextProvider>
+          <CommentContextProvider>
             <Header />
             <Outlet />
             <Footer />
-          </RecipeContextProvider>
-        </ProfileContextProvider>
-      </CommentContextProvider>
+          </CommentContextProvider>
+        </RecipeContextProvider>
+      </ProfileContextProvider>
     </>
   );
 }

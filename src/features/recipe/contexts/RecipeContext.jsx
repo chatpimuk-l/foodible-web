@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useAuth from "../../../features/auth/hooks/useAuth";
 import * as recipeApi from "../../../api/recipe";
 import * as favApi from "../../../api/fav";
+import * as responseApi from "../../../api/response";
 import HorizontalCard from "../../../components/HorizontalCard";
 import { useParams } from "react-router-dom";
 import validateRecipe from "../validators/validate-recipe";
@@ -44,6 +45,7 @@ export default function RecipeContextProvider({ children }) {
   const [isRecipeBelongToAuthUser, setIsRecipeBelongToAuthUser] =
     useState(false);
   const [isFav, setIsFav] = useState(false);
+  const [ratingsValue, setRatingsValue] = useState({});
 
   const recipeImageFileEl = useRef(null);
   const { recipeId, targetUserId } = useParams();
@@ -54,6 +56,7 @@ export default function RecipeContextProvider({ children }) {
     setRecipeImage(null);
     setIngredientList([{ id: nanoid() }]);
     setInstructionList([{ id: nanoid() }]);
+    setRatingsValue({});
   };
 
   const fetchRecipesBySearchName = async () => {
@@ -188,6 +191,9 @@ export default function RecipeContextProvider({ children }) {
         const recipesByUserId = await recipeApi.getRecipesByUserId(
           recipeById.data.recipe.userId
         );
+        const recipeRatings = await responseApi.getRatingsByRecipeId(recipeId);
+        setRatingsValue(recipeRatings.data?.ratings);
+        console.log("recipeRatings", recipeRatings);
         setRecipeObj(recipeById.data.recipe);
         setWriterRecipes(recipesByUserId.data?.recipes);
         setRecipe({
@@ -652,6 +658,8 @@ export default function RecipeContextProvider({ children }) {
         handleClickIngredientURL,
         isFav,
         handleClickFav,
+        ratingsValue,
+        setRatingsValue,
       }}
     >
       {children}

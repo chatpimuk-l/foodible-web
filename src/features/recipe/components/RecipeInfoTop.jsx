@@ -4,12 +4,20 @@ export default function RecipeInfoTop({
   recipeServing,
   recipePrepTime,
   recipeCookTime,
+  ratingsValue,
 }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-1 items-center">
-        <StarGroup />
-        <small>5 from 12 votes</small>
+        {!!ratingsValue._count?.rating && (
+          <>
+            <StarGroup />
+            <small>
+              {Math.round(ratingsValue._avg?.rating * 100) / 100} from{" "}
+              {ratingsValue._count?.rating} votes
+            </small>
+          </>
+        )}
       </div>
       <div className="flex justify-between ">
         <div className="flex gap-6">

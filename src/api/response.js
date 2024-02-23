@@ -5,3 +5,6 @@ export const createResponse = (recipeId, data) =>
 
 export const getResponseByRecipeId = (recipeId) =>
   axios.get(`/responses/${recipeId}`);
+
+export const getRatingsByRecipeId = (recipeId) =>
+  axios.get(`/responses/ratings/${recipeId}`);

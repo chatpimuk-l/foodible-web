@@ -7,6 +7,7 @@ import CommentCard from "../components/CommentCard";
 import { useEffect } from "react";
 import useAuth from "../../auth/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import useRecipe from "../../recipe/hooks/useRecipe";
 
 export const CommentContext = createContext();
 
@@ -17,6 +18,7 @@ export default function CommentContextProvider({ children }) {
   const [responseList, setResponseList] = useState([]);
   const [isRated, setIsRated] = useState(true);
   const { authUser } = useAuth();
+  const { setRatingsValue } = useRecipe();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -31,6 +33,7 @@ export default function CommentContextProvider({ children }) {
       return;
     }
     try {
+      console.log(44444);
       await responseApi.createResponse(recipeId, { comment, rating });
       await fetchResponseList();
       setComment("");
@@ -47,6 +50,9 @@ export default function CommentContextProvider({ children }) {
       const result = await responseApi.getResponseByRecipeId(recipeId);
       setResponseList(result.data.responses);
       console.log("result.data.responses", result.data.responses);
+      const recipeRatings = await responseApi.getRatingsByRecipeId(recipeId);
+      setRatingsValue(recipeRatings.data?.ratings);
+      console.log("recipeRatings", recipeRatings);
     } catch (err) {
       console.log(err);
       toast(err.response?.data.message);
