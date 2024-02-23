@@ -1,6 +1,8 @@
 import VerticalCard from "../../../components/VerticalCard";
+import useRecipe from "../../recipe/hooks/useRecipe";
 
 export default function FavRecipeContainer() {
+  const { renderFavRecipes } = useRecipe();
   return (
     <div className="flex flex-col gap-6">
       <div className=" flex justify-between">
@@ -10,11 +12,13 @@ export default function FavRecipeContainer() {
           <div className="underline">HIGHEST RATED</div>
         </div>
       </div>
-      <div className="flex gap-4 overflow-auto">
-        <VerticalCard />
-        <VerticalCard />
-        <VerticalCard />
-      </div>
+      {renderFavRecipes.length === 0 ? (
+        <div className="h-36 border-8 border-black p-6 ">
+          <div>There is no fav recipes yet.</div>
+        </div>
+      ) : (
+        <div className="flex gap-4 overflow-auto">{renderFavRecipes}</div>
+      )}
     </div>
   );
 }

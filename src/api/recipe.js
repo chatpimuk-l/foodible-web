@@ -15,6 +15,9 @@ export const getRecipeByRecipeId = (recipeId) =>
 export const getRecipesByUserId = (userId) =>
   axios.get(`/recipes/users/${userId}`);
 
+export const getRecipesByUserIdFav = (userId) =>
+  axios.get(`/recipes/favs/${userId}`);
+
 export const getRecipesBySearchName = (searchName) =>
   axios.get(`/recipes/?name=${searchName}`);
 

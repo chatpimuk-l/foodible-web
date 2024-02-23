@@ -6,10 +6,12 @@ import InputInstruction from "../components/InputInstruction";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../../features/auth/hooks/useAuth";
 import * as recipeApi from "../../../api/recipe";
+import * as favApi from "../../../api/fav";
 import HorizontalCard from "../../../components/HorizontalCard";
 import { useParams } from "react-router-dom";
 import validateRecipe from "../validators/validate-recipe";
 import IncludeButton from "../components/IncludeButton";
+import VerticalCard from "../../../components/VerticalCard";
 
 export const RecipeContext = createContext();
 
@@ -24,6 +26,7 @@ export default function RecipeContextProvider({ children }) {
   const [recipes, setRecipes] = useState([]);
   const [recipeObj, setRecipeObj] = useState({});
   const [writerRecipes, setWriterRecipes] = useState([]);
+  const [favRecipes, setFavRecipes] = useState([]);
 
   const [searchName, setSearchName] = useState("");
   const [include, setInclude] = useState("");
@@ -158,6 +161,14 @@ export default function RecipeContextProvider({ children }) {
           +targetUserId
         );
         setWriterRecipes(recipesByUserId.data?.recipes);
+        console.log("favRecipes", favRecipes);
+        if (authUser) {
+          const recipesByUserIdFav = await recipeApi.getRecipesByUserIdFav(
+            authUser.id
+          );
+          setFavRecipes(recipesByUserIdFav.data?.recipes);
+        }
+        console.log("favRecipes2", favRecipes);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -194,6 +205,16 @@ export default function RecipeContextProvider({ children }) {
         setIsRecipeBelongToAuthUser(
           recipeById.data.recipe?.userId === authUser?.id
         );
+        if (authUser) {
+          console.log("recipeById", recipeById);
+          const recipeFavList = recipeById.data.recipe?.favs;
+          const isAuthUserFav =
+            recipeFavList.findIndex((el) => el.userId === authUser.id) !== -1;
+          setIsFav(isAuthUserFav);
+          console.log("isAuthUserFav", isAuthUserFav);
+        } else {
+          setIsFav(false);
+        }
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -530,12 +551,17 @@ export default function RecipeContextProvider({ children }) {
     );
 
   const handleClickFav = () => {
+    if (!authUser) {
+      toast.success("Please login first");
+      return;
+    }
     if (isFav) {
       toast("Removed from fav");
     } else {
       toast("Added to fav");
     }
     setIsFav((prev) => !prev);
+    favApi.handleFav(recipeId);
   };
 
   const renderIncludeList = includeList?.map((el) => (
@@ -556,6 +582,24 @@ export default function RecipeContextProvider({ children }) {
       name={el.name}
       recipeImage={el.infos?.[0]?.image}
       ingredients={el.ingredients}
+    />
+  ));
+
+  const renderWriterRecipes = writerRecipes?.map((el) => (
+    <VerticalCard
+      key={el.id}
+      id={el.id}
+      name={el.name}
+      recipeImage={el.infos?.[0]?.image}
+    />
+  ));
+
+  const renderFavRecipes = favRecipes?.map((el) => (
+    <VerticalCard
+      key={el.id}
+      id={el.id}
+      name={el.name}
+      recipeImage={el.infos?.[0]?.image}
     />
   ));
 
@@ -587,6 +631,8 @@ export default function RecipeContextProvider({ children }) {
         loading,
         setLoading,
         renderRecipes,
+        renderWriterRecipes,
+        renderFavRecipes,
         recipeObj,
         setRecipeObj,
         writerRecipes,
