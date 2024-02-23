@@ -21,7 +21,7 @@ export default function RecipeContextProvider({ children }) {
 
   const [ingredientList, setIngredientList] = useState([{ id: nanoid() }]);
   const [instructionList, setInstructionList] = useState([{ id: nanoid() }]);
-  const [recipe, setRecipe] = useState({});
+  const [recipe, setRecipe] = useState({ description: "", tip: "" });
   const [recipeImage, setRecipeImage] = useState(recipe.image || null);
   const [recipes, setRecipes] = useState([]);
   const [recipeObj, setRecipeObj] = useState({});
@@ -49,7 +49,7 @@ export default function RecipeContextProvider({ children }) {
   const { recipeId, targetUserId } = useParams();
 
   const clearStates = () => {
-    setRecipe({});
+    setRecipe({ description: "", tip: "" });
     setRecipeObj({});
     setRecipeImage(null);
     setIngredientList([{ id: nanoid() }]);

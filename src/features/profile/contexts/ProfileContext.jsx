@@ -11,7 +11,7 @@ export const ProfileContext = createContext();
 export default function ProfileContextProvider({ children }) {
   const navigate = useNavigate();
 
-  const [userProfile, setUserProfile] = useState({});
+  const [userProfile, setUserProfile] = useState({ bio: "" });
   const [userProfileImage, setUserProfileImage] = useState(userProfile.image);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
@@ -25,15 +25,18 @@ export default function ProfileContextProvider({ children }) {
   const isAuthUserIdMatchTargetUserId = +targetUserId == authUser?.id;
 
   const handleInputChange = (e) => {
+    if (e.target.name === "name") {
+      e.target.value = e.target.value.toUpperCase();
+    }
     setUserProfile({
       ...userProfile,
-      [e.target.name]: e.target.value.toUpperCase(),
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleImageClear = (e) => {
     e.stopPropagation();
-    setUserProfile({ ...userProfile, image: null });
+    setUserProfile({ ...userProfile, image: null, bio: "" });
     setUserProfileImage(null);
     userProfileImageFileEl.current.value = "";
   };
@@ -77,7 +80,9 @@ export default function ProfileContextProvider({ children }) {
       formData.append("name", userProfile.name);
       formData.append("email", userProfile.email);
       formData.append("bio", userProfile.bio);
-      formData.append("image", userProfile.image);
+      if (userProfile.image) {
+        formData.append("image", userProfile.image);
+      }
       const res = await userApi.updateUserByTargetUserId(formData);
       res.data.image = userProfileImage;
       setUserProfile((prev) => ({ ...prev, ...res.data }));
