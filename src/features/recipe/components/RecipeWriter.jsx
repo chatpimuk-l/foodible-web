@@ -6,15 +6,23 @@ export default function RecipeWriter({
   writerImage,
   recipeCreatedAt,
 }) {
+  const formatter = new Intl.DateTimeFormat("en-GB", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
+
   return (
     <Link to={`/profile/${writerId}`}>
       <div className="flex bg-black text-white h-[30vh]">
-        <div className="w-[72vw] h-100% self-end  pl-32 pr-32 py-8">
+        <div className="w-[72vw] h-100% self-end  pl-appWidth pr-appWidth py-8">
           <div className="flex flex-col gap-2 pr-10">
             <h5 className="text-3xl font-black">{writerName}</h5>
             <div className="flex gap-3">
               <h5 className="self-end text-xl font-normal">PUBLISHED</h5>
-              <h5 className="text-xl font-black">{recipeCreatedAt}</h5>
+              <h5 className="text-xl font-black">
+                {formatter.format(Date.parse(recipeCreatedAt))}
+              </h5>
             </div>
           </div>
         </div>

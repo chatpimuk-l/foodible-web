@@ -30,7 +30,7 @@ export default function MyRecipeContainer() {
           </Button>
         </Link>
       </div>
-      <div className="flex gap-4">{renderWriterRecipes}</div>
+      <div className="flex gap-4 overflow-auto">{renderWriterRecipes}</div>
     </div>
   );
 }

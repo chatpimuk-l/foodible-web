@@ -36,7 +36,9 @@ export default function RecipeHero({ recipeName, recipeImage, recipeId }) {
             </Button>
           </div>
         ) : (
-          <div></div>
+          <div>
+            {/* <i className="fa-regular fa-heart text-5xl text-primary"></i> */}
+          </div>
         )}
         <div className="flex flex-col gap-4">
           <h1 className="text-6xl font-black pr-10">{recipeName}</h1>

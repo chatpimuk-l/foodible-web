@@ -22,13 +22,15 @@ export default function EditRecipeForm() {
     handleSubmitEditRecipeForm,
     loading,
     error,
-    setIsOpenEdit,
+    // isOpenEdit,
+    // setIsOpenEdit,
   } = useRecipe();
 
-  useEffect(() => {
-    setIsOpenEdit(true);
-    return () => setIsOpenEdit(false);
-  }, []);
+  // useEffect(() => {
+  //   setIsOpenEdit(true);
+  //   console.log("setIsOpenEdit", isOpenEdit);
+  //   return () => setIsOpenEdit(false);
+  // }, []);
 
   if (loading) {
     return <Spinner />;

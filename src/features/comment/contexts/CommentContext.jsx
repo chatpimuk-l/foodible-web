@@ -5,23 +5,37 @@ import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import CommentCard from "../components/CommentCard";
 import { useEffect } from "react";
+import useAuth from "../../auth/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export const CommentContext = createContext();
 
 export default function CommentContextProvider({ children }) {
   const { recipeId } = useParams();
   const [comment, setComment] = useState("");
-  const [rating, setRating] = useState("");
+  const [rating, setRating] = useState(0);
   const [responseList, setResponseList] = useState([]);
+  const [isRated, setIsRated] = useState(true);
+  const { authUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!authUser) {
+      toast("Please login first");
+      return;
+    }
+    if (!rating) {
+      setIsRated(false);
+      toast("Please give a rating");
+      return;
+    }
     try {
-      e.preventDefault();
       await responseApi.createResponse(recipeId, { comment, rating });
       await fetchResponseList();
       setComment("");
       setRating("");
-      toast("Send");
+      toast("Sent");
     } catch (err) {
       console.log(err);
       toast(err.response?.data.message);
@@ -69,6 +83,8 @@ export default function CommentContextProvider({ children }) {
     <CommentContext.Provider
       value={{
         setRating,
+        isRated,
+        setIsRated,
         comment,
         setComment,
         handleSubmit,

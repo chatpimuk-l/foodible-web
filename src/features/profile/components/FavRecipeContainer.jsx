@@ -10,7 +10,7 @@ export default function FavRecipeContainer() {
           <div className="underline">HIGHEST RATED</div>
         </div>
       </div>
-      <div className="flex gap-4">
+      <div className="flex gap-4 overflow-auto">
         <VerticalCard />
         <VerticalCard />
         <VerticalCard />

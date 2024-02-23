@@ -1,4 +1,7 @@
+import useRecipe from "../hooks/useRecipe";
+
 export default function RecipeIngredient({ recipeIngredients }) {
+  const { handleClickIngredientURL } = useRecipe();
   function Ingredients({ ingredient, amount, unit }) {
     return (
       <div className="flex items-center text-xl">
@@ -11,7 +14,15 @@ export default function RecipeIngredient({ recipeIngredients }) {
         <div className="w-20">
           <h5 className="font-black ">{unit}</h5>
         </div>
-        <h5 className="font-semibold ">{ingredient}</h5>
+        <h5
+          onClick={() => {
+            console.log("clickkkk");
+            handleClickIngredientURL(ingredient);
+          }}
+          className="font-semibold "
+        >
+          {ingredient}
+        </h5>
       </div>
     );
   }

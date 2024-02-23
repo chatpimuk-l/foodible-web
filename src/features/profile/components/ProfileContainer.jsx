@@ -2,8 +2,17 @@ import ProfileHero from "./ProfileHero";
 import MyRecipeContainer from "./MyRecipeContainer";
 // import SearchBar from "../../../components/SearchBar";
 import FavRecipeContainer from "./FavRecipeContainer";
+import useRecipe from "../../recipe/hooks/useRecipe";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
+  const { clearStates } = useRecipe();
+
+  useEffect(() => {
+    clearStates();
+    console.log("clear");
+  }, []);
+
   return (
     <>
       <div className=" pb-8 ">

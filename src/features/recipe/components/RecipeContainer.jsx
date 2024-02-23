@@ -14,13 +14,16 @@ import { useEffect } from "react";
 export default function RecipeContainer() {
   const { recipeObj, writerRecipes, clearStates, isOpenEdit } = useRecipe();
 
-  useEffect(() => {
-    return () => {
-      if (!isOpenEdit) {
-        clearStates();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     console.log(1234);
+  //     console.log("isOpenEdit", isOpenEdit);
+  //     if (!isOpenEdit) {
+  //       console.log(5678);
+  //       clearStates();
+  //     }
+  //   };
+  // }, []);
 
   return (
     <>

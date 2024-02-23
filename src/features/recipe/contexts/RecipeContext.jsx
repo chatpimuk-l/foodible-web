@@ -523,6 +523,11 @@ export default function RecipeContextProvider({ children }) {
     setIncludeList(includeList.filter((el) => el.id !== id));
   };
 
+  const handleClickIngredientURL = (ingredient) =>
+    window.location.replace(
+      `https://mart.grab.com/th/th/search?keyword=${ingredient.toLowerCase()}`
+    );
+
   const renderIncludeList = includeList?.map((el) => (
     <IncludeButton id={el.id} key={el.id} ingredient={el.ingredient} />
   ));
@@ -588,6 +593,7 @@ export default function RecipeContextProvider({ children }) {
         setIsOpenEdit,
         setIsOpenCreate,
         isRecipeBelongToAuthUser,
+        handleClickIngredientURL,
       }}
     >
       {children}

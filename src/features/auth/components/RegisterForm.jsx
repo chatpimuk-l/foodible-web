@@ -15,6 +15,9 @@ export default function registerForm() {
   const [error, setError] = useState({});
 
   const handleInputChange = (e) => {
+    if (e.target.name === "name") {
+      e.target.value = e.target.value.toUpperCase();
+    }
     setInput({ ...input, [e.target.name]: e.target.value });
   };
 

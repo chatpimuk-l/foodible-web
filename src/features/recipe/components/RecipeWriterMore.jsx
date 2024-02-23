@@ -24,7 +24,9 @@ export default function RecipeWriterMore({
             <h1 className=" text-5xl font-black">MORE RECIPES FROM</h1>
             <h1 className=" text-5xl font-medium">{writerName}</h1>
           </div>
-          <div className="flex gap-4">{renderWriterRecipesMore}</div>
+          <div className="flex gap-4 overflow-auto">
+            {renderWriterRecipesMore}
+          </div>
         </div>
       )}
     </>
