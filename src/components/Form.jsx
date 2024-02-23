@@ -12,7 +12,7 @@ export default function Form({
   return (
     <form
       onSubmit={onSubmit}
-      className="flex flex-col gap-6 border-8 border-black w-[80%] lg:w-[60%] min-h-[calc(100vh-20vh)] mt-[10vh] mx-auto p-8"
+      className="flex flex-col gap-6 border-8 border-black  min-h-[calc(100vh-26vh)] mx-appWidth mb-appWidth p-8"
     >
       <h1 className="font-black text-7xl">{title}</h1>
       <div className="flex flex-col gap-3">{children}</div>
