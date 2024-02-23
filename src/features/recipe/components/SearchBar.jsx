@@ -15,11 +15,11 @@ export default function SearchBar() {
 
   return (
     <div className=" bg-primary px-appWidth py-12 flex flex-col gap-3 ">
-      <div className=" flex gap-3 font-black text-2xl">
+      <div className="  flex gap-3 font-black text-2xl">
         <div className="bg-white min-w-16 flex justify-center items-center">
           <i className="fa-solid fa-magnifying-glass bg-white"></i>
         </div>
-        <div className=" flex flex-col gap-3">
+        <div className="w-full flex flex-col gap-3">
           <div className="flex gap-3 bg-white py-2 px-6 ">
             <div className="">NAME :</div>
             <input
