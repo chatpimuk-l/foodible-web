@@ -79,7 +79,9 @@ export default function ProfileContextProvider({ children }) {
       const formData = new FormData();
       formData.append("name", userProfile.name);
       formData.append("email", userProfile.email);
-      formData.append("bio", userProfile.bio);
+      if (userProfile.bio) {
+        formData.append("bio", userProfile.bio?.trim());
+      }
       if (userProfile.image) {
         formData.append("image", userProfile.image);
       }

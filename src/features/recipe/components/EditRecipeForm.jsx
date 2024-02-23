@@ -101,7 +101,7 @@ export default function EditRecipeForm() {
           errorMessage={error.serving}
         />
       </div>
-      <div className="flex gap-3">
+      <div className="w-[60%] flex gap-3">
         <Input
           label="INGREDIENT"
           id="ingredient"
