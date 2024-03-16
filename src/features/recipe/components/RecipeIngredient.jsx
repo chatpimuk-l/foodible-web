@@ -27,7 +27,7 @@ export default function RecipeIngredient({ recipeIngredients }) {
     );
   }
 
-  const renderIngredients = recipeIngredients.map((el, index) => (
+  const renderIngredients = recipeIngredients?.map((el, index) => (
     <Ingredients
       key={index}
       ingredient={el.ingredient}
